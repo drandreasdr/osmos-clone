@@ -1,5 +1,3 @@
-//! A Roguelike Game using Piston Engine
-
 extern crate glutin_window;
 extern crate piston;
 
@@ -16,13 +14,17 @@ use piston::{ButtonEvent, RenderEvent};
 use graphics::character::CharacterCache;
 use opengl_graphics::{Filter, GlGraphics, GlyphCache, OpenGL, TextureSettings};
 
+use std::f64::consts;
+
 type Colour = [f32; 4];
 
 const RED: Colour = [1.0, 0.0, 0.0, 1.0];
 const GREEN: Colour = [0.0, 1.0, 0.0, 1.0];
 const BLUE: Colour = [0.0, 0.0, 1.0, 1.0];
+const YELLOW: Colour = [1.0, 1.0, 0.0, 1.0];
 const WHITE: Colour = [1.0; 4];
 const BLACK: Colour = [0.0, 0.0, 0.0, 1.0];
+const TRANSPARENT: Colour = [0.0, 0.0, 0.0, 0.0];
 
 const WINDOW_SIZE: i32 = 512;
 const PIXEL_SIZE: f64 = 32.0;
@@ -83,38 +85,108 @@ fn main() {
 
     let mut events = Events::new(EventSettings::new());
     let mut player = Object::new(0, 0, '@', RED);
-    while let Some(e) = events.next(&mut window) {
-        if let Some(r) = e.render_args() {
-            gl.draw(r.viewport(), |c, g| {
-                graphics::clear(BLUE, g);
+    while let Some(event) = events.next(&mut window) {
+        if let Some(render_args) = event.render_args() {
+            gl.draw(render_args.viewport(), |context, gl_graphics| {
+                graphics::clear(BLACK, gl_graphics);
 
-                for i in 0..WORLD_SIZE {
-                    for j in 0..WORLD_SIZE {
-                        let pos: [f64; 4] = [
-                            PIXEL_SIZE * i as f64,
-                            PIXEL_SIZE * j as f64,
-                            PIXEL_SIZE * (i + 1) as f64,
-                            PIXEL_SIZE * (j + 1) as f64,
-                        ];
-                        graphics::Rectangle::new(map[i as usize][j as usize].colour).draw(
-                            pos,
-                            &c.draw_state,
-                            c.transform,
-                            g,
-                        );
-                    }
-                }
-                use graphics::Transformed;
-                    let character = glyphs.character(32, player.character).unwrap();
-                    graphics::Image::new_color(player.colour).draw(
-                        character.texture,
-                        &c.draw_state,
-                        c.transform.trans(player.x as f64, player.y as f64),
-                        g,
+                let pos: [f64; 4] = [
+                    (WINDOW_SIZE as f64)*0.15,
+                    (WINDOW_SIZE as f64)*0.4,
+                    (WINDOW_SIZE as f64)*0.45,
+                    (WINDOW_SIZE as f64)*0.4,
+                    ];
+                let rect = graphics::Rectangle::new(GREEN);
+                let rect2 = graphics::Rectangle::new(GREEN);
+                rect.draw(
+                    pos,
+                    &context.draw_state,
+                    context.transform,
+                    gl_graphics,
+                );
+
+                let ellipse = graphics::Ellipse::new(WHITE).draw(
+                        [(WINDOW_SIZE as f64)*0.15,
+                        (WINDOW_SIZE as f64)*0.4,
+                        (WINDOW_SIZE as f64)*0.45,
+                        (WINDOW_SIZE as f64)*0.4,],
+                        &context.draw_state,
+                        context.transform,
+                        gl_graphics,
                     );
+                
+                graphics::CircleArc::new(YELLOW, 1.0, 0.0, 1.99*consts::PI).draw(
+                    [(WINDOW_SIZE as f64)*0.35,
+                    (WINDOW_SIZE as f64)*0.55,
+                    (WINDOW_SIZE as f64)*0.45,
+                    (WINDOW_SIZE as f64)*0.4,],
+                    &context.draw_state,
+                    context.transform,
+                    gl_graphics,);
+
+                graphics::rectangle(GREEN,
+                    [(WINDOW_SIZE as f64)*0.25,
+                    (WINDOW_SIZE as f64)*0.45,
+                    (WINDOW_SIZE as f64)*0.65,
+                    (WINDOW_SIZE as f64)*0.45,],
+                    context.transform,
+                    gl_graphics,);
+                graphics::rectangle(BLUE,
+                    [(WINDOW_SIZE as f64)*0.25 + 1.0,
+                    (WINDOW_SIZE as f64)*0.45 + 1.0,
+                    (WINDOW_SIZE as f64)*0.65 - 2.0,
+                    (WINDOW_SIZE as f64)*0.45 - 2.0,],
+                    context.transform,
+                    gl_graphics,);
+
+                graphics::ellipse(RED,
+                    [(WINDOW_SIZE as f64)*0.05,
+                    (WINDOW_SIZE as f64)*0.35,
+                    (WINDOW_SIZE as f64)*0.35,
+                    (WINDOW_SIZE as f64)*0.35],
+                    context.transform,
+                    gl_graphics);
+                graphics::ellipse(BLACK,
+                    [(WINDOW_SIZE as f64)*0.05 + 1.0,
+                    (WINDOW_SIZE as f64)*0.35 + 1.0,
+                    (WINDOW_SIZE as f64)*0.35 - 2.0,
+                    (WINDOW_SIZE as f64)*0.35 - 2.0],
+                    context.transform,
+                    gl_graphics);
+
+                let xx = (WINDOW_SIZE as f64)*0.05;
+                let yy = (WINDOW_SIZE as f64)*0.55;
+                let radius = (WINDOW_SIZE as f64)*0.65;
+                let thickness = radius/50.0;
+                graphics::Ellipse::new_border(RED, thickness).draw(
+                    [xx + thickness,
+                    yy + thickness,
+                    radius - thickness*2.0,
+                    radius - thickness*2.0],
+                    &context.draw_state,
+                    context.transform,
+                    gl_graphics,);
+
+                graphics::Ellipse::new_border(GREEN, 1.0).draw(
+                    [(WINDOW_SIZE as f64)*0.05,
+                    (WINDOW_SIZE as f64)*0.55,
+                    (WINDOW_SIZE as f64)*0.35,
+                    (WINDOW_SIZE as f64)*0.35],
+                    &context.draw_state,
+                    context.transform,
+                    gl_graphics,);
+
+                use graphics::Transformed;
+                let character = glyphs.character(32, player.character).unwrap();
+                graphics::Image::new_color(player.colour).draw(
+                    character.texture,
+                    &context.draw_state,
+                    context.transform.trans(player.x as f64, player.y as f64),
+                    gl_graphics,
+                );
             });
         }
-        if let Some(k) = e.button_args() {
+        if let Some(k) = event.button_args() {
             if k.state == ButtonState::Press {
                 match k.button {
                     Button::Keyboard(Key::Up) => player.y -= PIXEL_SIZE as i32,
