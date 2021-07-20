@@ -2,26 +2,27 @@ extern crate graphics;
 extern crate opengl_graphics;
 
 pub struct Ring {
-    xPosition: f64,
-    yPosition: f64,
+    x_position: f64,
+    y_position: f64,
     radius: f64,
     thickness: f64,
-    ellipse: graphics::Ellipse
+    colour: Colour
 }
 
+type Colour = [f32; 4];
+
 impl Ring {
-    pub fn new(xPosition: f64,
-               yPosition: f64,
+    pub fn new(x_position: f64,
+               y_position: f64,
                radius: f64,
-               color: [f32; 4]) -> Self {
+               colour: Colour) -> Self {
         let thickness = radius/10.0;
-        let ellipse = graphics::Ellipse::new_border(color, thickness);
         Ring {
-            xPosition,
-            yPosition,
+            x_position,
+            y_position,
             radius,
             thickness,
-            ellipse
+            colour
         }
     }
 
@@ -29,8 +30,8 @@ impl Ring {
                 draw_state: &graphics::DrawState,
                 transform: graphics::math::Matrix2d,
                 graphics: &mut opengl_graphics::GlGraphics) {
-        self.ellipse.draw([self.xPosition + self.thickness,
-                           self.yPosition + self.thickness,
+        graphics::Ellipse::new_border(self.colour, self.thickness).draw([self.x_position + self.thickness,
+                           self.y_position + self.thickness,
                            self.radius - self.thickness*2.0,
                            self.radius - self.thickness*2.0],
                            draw_state,
