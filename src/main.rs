@@ -16,6 +16,8 @@ use opengl_graphics::{Filter, GlGraphics, GlyphCache, OpenGL, TextureSettings};
 
 use std::f64::consts;
 
+mod ring;
+
 type Colour = [f32; 4];
 
 const RED: Colour = [1.0, 0.0, 0.0, 1.0];
@@ -175,6 +177,11 @@ fn main() {
                     &context.draw_state,
                     context.transform,
                     gl_graphics,);
+
+                let rr = ring::Ring::new((WINDOW_SIZE as f64)*0.35, (WINDOW_SIZE as f64)*0.35, (WINDOW_SIZE as f64)*0.25, YELLOW);
+                rr.draw(&context.draw_state,
+                        context.transform,
+                        gl_graphics);
 
                 use graphics::Transformed;
                 let character = glyphs.character(32, player.character).unwrap();
