@@ -1,15 +1,12 @@
-extern crate glutin_window;
+extern crate piston_window;
 extern crate piston;
 
 extern crate graphics;
 extern crate opengl_graphics;
 
-use glutin_window::GlutinWindow;
-use piston::WindowSettings;
-
 use piston::event_loop::{EventLoop, EventSettings, Events};
-use piston::input::{Button, ButtonState, Key};
-use piston::{ButtonEvent, RenderEvent};
+//use piston_window::{Button, Key, ButtonState, WindowSettings, PistonWindow, RenderEvent, ButtonEvent};
+use piston_window::*;
 
 use opengl_graphics::{GlGraphics, OpenGL};
 
@@ -30,13 +27,12 @@ const TRANSPARENT: Colour = [0.0, 0.0, 0.0, 0.0];
 const WINDOW_SIZE: i32 = 512;
 
 fn main() {
-    let opengl = OpenGL::V3_2;
-    let settings = WindowSettings::new("Roguelike", [512; 2]).exit_on_esc(true);
-    let mut window: GlutinWindow = settings.build().expect("Could not create window");
-    let mut gl = GlGraphics::new(opengl);
+    let mut window: PistonWindow = piston_window::WindowSettings::new("Osmos clone", (640, 480))
+        .exit_on_esc(true)
+        .build()
+        .unwrap();
 
     let frames_per_second = 10;
-    let time_per_frame = 1.0/frames_per_second as f32;
     let mut previous_now = Instant::now();
     let mut now = Instant::now();
 
@@ -45,30 +41,36 @@ fn main() {
     let mut player = ring::Ring::new(0.0, 0.0, 50.0, RED);
     let rr = ring::Ring::new((WINDOW_SIZE as f64)*0.35, (WINDOW_SIZE as f64)*0.35, (WINDOW_SIZE as f64)*0.25, YELLOW);
 
-    while let Some(event) = events.next(&mut window) {
-        if let Some(render_args) = event.render_args() {
-            gl.draw(render_args.viewport(), |context, gl_graphics| {
-                
+    //while let Some(event) = events.next(&mut window) {
+    while let Some(event) = window.next() {
+        previous_now = now;
+        now = Instant::now();
+        let time_elapsed = now - previous_now;
+        println!("tick!! {}", time_elapsed.as_secs_f32().to_string());
+
+        if let Some(_) = event.render_args() {
+            //game.render(&mut window, &e);
+            window.draw_2d(&event, |context, graphics, _| {
+                clear(BLACK, graphics);
+    
                 previous_now = now;
                 now = Instant::now();
                 let time_elapsed = now - previous_now;
                 println!("tick!! {}", time_elapsed.as_secs_f32().to_string());
-
+    
                 //update(time_elapsed)
-                graphics::clear(BLACK, gl_graphics);
-                rr.draw(&context.draw_state,
-                        context.transform,
-                        gl_graphics);
-                player.draw(&context.draw_state,
-                            context.transform,
-                            gl_graphics);
-
-                
+                rr.draw(context.transform,
+                        graphics);
+                player.draw(context.transform,
+                            graphics);
             });
         }
-        if let Some(k) = event.button_args() {
-            if k.state == ButtonState::Press {
-                match k.button {
+
+        
+                
+        if let Some(button_args) = event.button_args() {
+            if button_args.state == ButtonState::Press {
+                match button_args.button {
                     Button::Keyboard(Key::Up) => player.y -= 10.0,
                     Button::Keyboard(Key::Down) => player.y += 10.0,
                     Button::Keyboard(Key::Left) => player.x -= 10.0,

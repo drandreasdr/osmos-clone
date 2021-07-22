@@ -1,6 +1,8 @@
 extern crate graphics;
 extern crate opengl_graphics;
 
+use piston_window::*;
+
 pub struct Ring {
     pub x: f64,
     pub y: f64,
@@ -27,15 +29,10 @@ impl Ring {
     }
 
     pub fn draw(&self,
-                draw_state: &graphics::DrawState,
                 transform: graphics::math::Matrix2d,
-                graphics: &mut opengl_graphics::GlGraphics) {
-        graphics::Ellipse::new_border(self.colour, self.thickness).draw([self.x + self.thickness,
-                           self.y + self.thickness,
-                           self.radius - self.thickness*2.0,
-                           self.radius - self.thickness*2.0],
-                           draw_state,
-                           transform,
-                           graphics);
+                graphics: &mut G2d) {
+        ellipse(self.colour, [self.x, self.y, self.radius, self.radius],
+            transform,
+            graphics);
     }
 }
