@@ -12,7 +12,12 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment":  [{ "name": "RUST_BACKTRACE", "value": "1" }],
+            "environment": [
+                {
+                    "name": "RUST_BACKTRACE",
+                    "value": "1"
+                }
+            ],
             "console": "integratedTerminal",
             "preLaunchTask": "Rust: cargo build",
         }
