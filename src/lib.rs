@@ -4,3 +4,4 @@ pub mod game;
 pub mod player;
 pub mod renderer;
 pub mod scene;
+pub mod physics;

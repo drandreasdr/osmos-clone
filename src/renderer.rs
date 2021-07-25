@@ -3,9 +3,6 @@ extern crate graphics;
 extern crate opengl_graphics;
 use piston_window::*;
 
-pub struct Renderer {}
-
-impl Renderer {
     pub fn render(scene: &scene::Scene, transform: graphics::math::Matrix2d, graphics: &mut G2d) {
 
         ellipse(
@@ -32,4 +29,3 @@ impl Renderer {
             graphics,
         );
     }
-}

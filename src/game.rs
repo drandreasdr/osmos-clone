@@ -3,6 +3,7 @@ extern crate opengl_graphics;
 extern crate piston_window;
 
 use super::constants;
+use super::physics;
 use super::renderer;
 use super::scene;
 use piston_window::*;
@@ -27,8 +28,8 @@ impl Game {
                 .build()
                 .unwrap();
 
-        let frames_per_second = 10;
-        let updates_per_second = 10;
+        let frames_per_second = 60;
+        let updates_per_second = 10; //TODO not used
         let mut previous_now = Instant::now();
         let mut now = Instant::now();
 
@@ -42,7 +43,13 @@ impl Game {
                 previous_now = now;
                 now = Instant::now();
                 let time_elapsed = now - previous_now;
-                println!("tick!! {}", time_elapsed.as_secs_f32().to_string());
+                println!(
+                    "tick!! {} {}",
+                    time_elapsed.as_secs_f32().to_string(),
+                    self.scene.player.position
+                );
+
+                game.update(time_elapsed.as_millis());
 
                 game.draw(&mut window, &event);
             }
@@ -53,10 +60,15 @@ impl Game {
         }
     }
 
+    pub fn update(&mut self, time_step_ms: u128) {
+        let time_step_s = (time_step_ms as f64) / 1000.0;
+        physics::integrate(&mut self.scene, time_step_s);
+    }
+
     pub fn draw(&mut self, window: &mut PistonWindow, event: &Event) {
         window.draw_2d(event, |context, graphics, _| {
             clear(constants::BLACK, graphics);
-            renderer::Renderer::render(&self.scene, context.transform, graphics);
+            renderer::render(&self.scene, context.transform, graphics);
         });
     }
 
