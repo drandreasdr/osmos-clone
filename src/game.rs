@@ -43,13 +43,8 @@ impl Game {
                 previous_now = now;
                 now = Instant::now();
                 let time_elapsed = now - previous_now;
-                println!(
-                    "tick!! {} {}",
-                    time_elapsed.as_secs_f32().to_string(),
-                    self.scene.player.position
-                );
 
-                game.update(time_elapsed.as_millis());
+                game.update(time_elapsed.as_secs_f64());
 
                 game.draw(&mut window, &event);
             }
@@ -60,9 +55,8 @@ impl Game {
         }
     }
 
-    pub fn update(&mut self, time_step_ms: u128) {
-        let time_step_s = (time_step_ms as f64) / 1000.0;
-        physics::integrate(&mut self.scene, time_step_s);
+    pub fn update(&mut self, time_step: f64) {
+        physics::integrate(&mut self.scene, time_step);
     }
 
     pub fn draw(&mut self, window: &mut PistonWindow, event: &Event) {
