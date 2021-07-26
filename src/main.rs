@@ -1,6 +1,6 @@
 use osmos_clone::game;
 
 fn main() {
-    let game = game::Game::new();
+    let mut game = game::Game::new();
     game.run();
 }

@@ -5,3 +5,4 @@ pub mod player;
 pub mod renderer;
 pub mod scene;
 pub mod physics;
+pub mod input_handler;

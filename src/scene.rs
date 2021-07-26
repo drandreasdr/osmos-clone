@@ -12,7 +12,7 @@ impl Scene {
     pub fn new() -> Self {
         let player = Player::new(
             Vector2::<f64>::new(0.0, 0.0),
-            Vector2::<f64>::new(100.0, 10.0),
+            Vector2::<f64>::new(0.0, 0.0),
             50.0,
             constants::RED,
         );
