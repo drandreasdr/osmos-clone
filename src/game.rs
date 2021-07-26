@@ -4,22 +4,25 @@ extern crate piston_window;
 
 use super::constants;
 use super::input_handler;
-use super::physics;
 use super::renderer;
 use super::scene;
 use piston_window::*;
-use std::time::Instant;
 
 const WINDOW_SIZE: u32 = 512;
 
 pub struct Game {
     scene: scene::Scene,
+    input_handler: input_handler::InputHandler,
 }
 
 impl Game {
     pub fn new() -> Self {
         let scene = scene::Scene::new();
-        Game { scene }
+        let input_handler = input_handler::InputHandler::new();
+        Game {
+            scene,
+            input_handler,
+        }
     }
 
     pub fn run(&mut self) {
@@ -36,7 +39,7 @@ impl Game {
 
         while let Some(event) = window.next() {
             if let Some(update_args) = event.update_args() {
-                physics::integrate(&mut self.scene, update_args.dt);
+                self.scene.update(update_args.dt, &self.input_handler)
             }
 
             if let Some(_) = event.render_args() {
@@ -46,8 +49,18 @@ impl Game {
                 });
             }
 
+            if let Some(mouse_coordinates) = event.mouse_cursor_args() {
+                self.input_handler.handle_mouse_move(&mut self.scene, mouse_coordinates);
+            }
+
+            if let Some(button) = event.press_args() {
+                self.input_handler
+                    .handle_button_press_event(&mut self.scene, button);
+            }
+
             if let Some(button_args) = event.button_args() {
-                input_handler::handle_button_args(&mut self.scene, button_args, &window);
+                self.input_handler
+                    .handle_button_args(&mut self.scene, button_args, &window);
             }
         }
     }

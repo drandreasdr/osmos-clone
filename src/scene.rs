@@ -1,5 +1,7 @@
 use super::constants;
 use super::enemy::*;
+use super::input_handler;
+use super::physics;
 use super::player::*;
 use nalgebra::Vector2;
 
@@ -25,5 +27,9 @@ impl Scene {
         );
 
         Scene { player, enemy }
+    }
+
+    pub fn update(&mut self, dt: f64, input_handler: &input_handler::InputHandler) {
+        physics::integrate(self, dt);
     }
 }
