@@ -32,25 +32,15 @@ impl Game {
                 .build()
                 .unwrap();
 
-        let frames_per_second = 60;
-        let updates_per_second = 60;
+        let frames_per_second = 1;
+        let updates_per_second = 1;
         window.set_max_fps(frames_per_second);
         window.set_ups(updates_per_second);
 
         while let Some(event) = window.next() {
-            if let Some(update_args) = event.update_args() {
-                self.scene.update(update_args.dt, &self.input_handler)
-            }
-
-            if let Some(_) = event.render_args() {
-                window.draw_2d(&event, |context, graphics, _| {
-                    clear(constants::BLACK, graphics);
-                    renderer::render(&self.scene, context.transform, graphics);
-                });
-            }
-
             if let Some(mouse_coordinates) = event.mouse_cursor_args() {
-                self.input_handler.handle_mouse_move(&mut self.scene, mouse_coordinates);
+                self.input_handler
+                    .handle_mouse_move(&mut self.scene, mouse_coordinates);
             }
 
             if let Some(button) = event.press_args() {
@@ -61,6 +51,18 @@ impl Game {
             if let Some(button_args) = event.button_args() {
                 self.input_handler
                     .handle_button_args(&mut self.scene, button_args, &window);
+            }
+
+            if let Some(update_args) = event.update_args() {
+                self.scene.update(update_args.dt, &self.input_handler);
+                self.input_handler.clear_input_actions();
+            }
+
+            if let Some(_) = event.render_args() {
+                window.draw_2d(&event, |context, graphics, _| {
+                    clear(constants::BLACK, graphics);
+                    renderer::render(&self.scene, context.transform, graphics);
+                });
             }
         }
     }

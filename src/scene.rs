@@ -31,5 +31,8 @@ impl Scene {
 
     pub fn update(&mut self, dt: f64, input_handler: &input_handler::InputHandler) {
         physics::integrate(self, dt);
+        for input_action in input_handler.input_actions.iter() {
+            println!("input action: {:?}", input_action);
+        }
     }
 }
