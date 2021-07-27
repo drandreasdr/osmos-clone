@@ -5,6 +5,7 @@ use piston_window::*;
 #[derive(Debug)]
 pub enum InputAction {
     LeftMouseClick(Vector2<f64>),
+    RightMouseClick(Vector2<f64>),
 }
 
 pub struct InputHandler {
@@ -42,6 +43,9 @@ impl InputHandler {
                 Button::Mouse(MouseButton::Left) => self
                     .input_actions
                     .push(InputAction::LeftMouseClick(self.mouse_position)),
+                Button::Mouse(MouseButton::Right) => self
+                    .input_actions
+                    .push(InputAction::RightMouseClick(self.mouse_position)),
                 _ => (),
             }
         }
