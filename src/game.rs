@@ -32,8 +32,8 @@ impl Game {
                 .build()
                 .unwrap();
 
-        let frames_per_second = 1;
-        let updates_per_second = 1;
+        let frames_per_second = 60;
+        let updates_per_second = 60;
         window.set_max_fps(frames_per_second);
         window.set_ups(updates_per_second);
 

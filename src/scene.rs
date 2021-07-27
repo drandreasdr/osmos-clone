@@ -7,7 +7,7 @@ use nalgebra::Vector2;
 
 pub struct Scene {
     pub player: Player,
-    pub enemy: Enemy,
+    pub enemies: Vec<Enemy>,
 }
 
 impl Scene {
@@ -19,21 +19,34 @@ impl Scene {
             constants::RED,
         );
 
-        let enemy = Enemy::new(
-            Vector2::<f64>::new(50.0, 50.0),
-            Vector2::<f64>::new(0.0, 0.0),
-            20.0,
-            constants::YELLOW,
-        );
+        let enemies = vec![
+            Enemy::new(
+                Vector2::<f64>::new(50.0, 50.0),
+                Vector2::<f64>::new(0.0, 0.0),
+                20.0,
+                constants::YELLOW,
+            ),
+            Enemy::new(
+                Vector2::<f64>::new(50.0, 150.0),
+                Vector2::<f64>::new(1.0, 0.0),
+                20.0,
+                constants::BLUE,
+            ),
+        ];
 
-        Scene { player, enemy }
+        Scene { player, enemies }
     }
 
     pub fn update(&mut self, dt: f64, input_handler: &input_handler::InputHandler) {
         physics::integrate(self, dt);
         for input_action in input_handler.input_actions.iter() {
             if let input_handler::InputAction::LeftMouseClick(mouse_coordinates) = input_action {
-                println!("Clicked at: {:?}", mouse_coordinates);
+                self.enemies.push(Enemy::new(
+                    mouse_coordinates.clone(),
+                    Vector2::<f64>::new(50.0, 0.0),
+                    10.0,
+                    constants::WHITE,
+                ))
             }
         }
     }
