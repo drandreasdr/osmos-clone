@@ -61,7 +61,7 @@ impl Game {
             if let Some(_) = event.render_args() {
                 window.draw_2d(&event, |context, graphics, _| {
                     clear(constants::BLACK, graphics);
-                    renderer::render(&self.scene, context.transform, graphics);
+                    self.scene.render(context.transform, graphics);
                 });
             }
         }

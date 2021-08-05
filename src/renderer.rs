@@ -16,13 +16,13 @@ pub fn render(scene: &scene::Scene, transform: graphics::math::Matrix2d, graphic
         graphics,
     );
 
-    ellipse(
+    rectangle(
         scene.direction_marker.color,
         [
-            scene.direction_marker.position[0] - scene.direction_marker.radius,
-            scene.direction_marker.position[1] - scene.direction_marker.radius,
-            scene.direction_marker.radius * 2.0,
-            scene.direction_marker.radius * 2.0,
+            scene.direction_marker.position[0],
+            scene.direction_marker.position[1],
+            scene.direction_marker.length,
+            scene.direction_marker.length,
         ],
         transform,
         graphics,
