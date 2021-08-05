@@ -1,3 +1,4 @@
+use super::collisions;
 use super::constants;
 use super::entities::*;
 use super::input_handler;
@@ -61,12 +62,16 @@ impl Scene {
 
         for input_action in input_handler.input_actions.iter() {
             if let input_handler::InputAction::LeftMouseClick(mouse_coordinates) = input_action {
+                //Ejection event:
+                let (velocity_ejected_particle, new_velocity_player) =
+                    collisions::calculate_ejection(&self.player, *mouse_coordinates);
                 self.enemies.push(Enemy::new(
                     new_enemy_start_position,
-                    Vector2::<f64>::new(0.0, 0.0),
-                    direction_marker_radius,
+                    velocity_ejected_particle,
+                    collisions::RADIUS_EJECTED_PARTICLE,
                     constants::WHITE,
-                ))
+                ));
+                self.player.velocity = new_velocity_player;
             }
         }
     }
