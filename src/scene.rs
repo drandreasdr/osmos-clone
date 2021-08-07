@@ -48,30 +48,16 @@ impl Scene {
     }
 
     pub fn update(&mut self, dt: f64, input_handler: &input_handler::InputHandler) {
+        let aim_direction = (input_handler.mouse_position - self.player.position).normalize();
+        self.direction_marker.position = self.player.position + aim_direction * self.player.radius;
+
         physics::integrate(self, dt);
 
-        let vector_toward_mouse_cursor =
-            (input_handler.mouse_position - self.player.position).normalize();
-        let direction_marker_radius = 10.0;
-        self.direction_marker.position =
-            self.player.position + vector_toward_mouse_cursor * self.player.radius;
-        let new_enemy_start_position = self.player.position
-            + vector_toward_mouse_cursor * (self.player.radius + direction_marker_radius);
-
-        //let new_enemy_velocity =
+        collisions::handle_collisions(self);
 
         for input_action in input_handler.input_actions.iter() {
             if let input_handler::InputAction::LeftMouseClick(mouse_coordinates) = input_action {
-                //Ejection event:
-                let (velocity_ejected_particle, new_velocity_player) =
-                    collisions::calculate_ejection(&self.player, *mouse_coordinates);
-                self.enemies.push(Enemy::new(
-                    new_enemy_start_position,
-                    velocity_ejected_particle,
-                    collisions::RADIUS_EJECTED_PARTICLE,
-                    constants::WHITE,
-                ));
-                self.player.velocity = new_velocity_player;
+                collisions::handle_ejection(self, *mouse_coordinates);
             }
         }
     }
