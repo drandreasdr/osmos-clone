@@ -4,7 +4,6 @@ extern crate piston_window;
 
 use super::constants;
 use super::input_handler;
-use super::renderer;
 use super::scene;
 use piston_window::*;
 
@@ -17,7 +16,7 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Self {
-        let scene = scene::Scene::new();
+        let scene = scene::Scene::new((WINDOW_SIZE as f64, WINDOW_SIZE as f64));
         let input_handler = input_handler::InputHandler::new();
         Game {
             scene,

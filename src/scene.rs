@@ -9,13 +9,14 @@ extern crate opengl_graphics;
 use piston_window::*;
 
 pub struct Scene {
+    pub window_size: (f64, f64),
     pub player: Player,
     pub direction_marker: DirectionMarker,
     pub enemies: Vec<Enemy>,
 }
 
 impl Scene {
-    pub fn new() -> Self {
+    pub fn new(window_size: (f64, f64)) -> Self {
         let player = Player::new(
             Vector2::<f64>::new(300.0, 300.0),
             Vector2::<f64>::new(0.0, 0.0),
@@ -41,6 +42,7 @@ impl Scene {
         ];
 
         Scene {
+            window_size,
             player,
             direction_marker,
             enemies,
