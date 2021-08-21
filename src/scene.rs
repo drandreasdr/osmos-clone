@@ -10,48 +10,44 @@ use piston_window::*;
 
 pub struct Scene {
     pub window_size: (f64, f64),
-    pub player: Player,
+    pub cell_collection: CellCollection,
     pub direction_marker: DirectionMarker,
-    pub enemies: Vec<Enemy>,
 }
 
 impl Scene {
     pub fn new(window_size: (f64, f64)) -> Self {
-        let player = Player::new(
+        let mut cell_collection = CellCollection::new();
+        cell_collection.add_cell(Cell::new(CellType::Player,
             Vector2::<f64>::new(300.0, 300.0),
             Vector2::<f64>::new(0.0, 0.0),
             50.0,
             constants::RED,
-        );
+        ));
+
+        cell_collection.add_cell(Cell::new(CellType::NonPlayer,
+            Vector2::<f64>::new(50.0, 50.0),
+                Vector2::<f64>::new(0.0, 0.0),
+                20.0,
+                constants::YELLOW));
+                cell_collection.add_cell(Cell::new(CellType::NonPlayer,
+                    Vector2::<f64>::new(50.0, 150.0),
+                Vector2::<f64>::new(1.0, 0.0),
+                20.0,
+                constants::BLUE,));
 
         let direction_marker = DirectionMarker::new(10.0);
 
-        let enemies = vec![
-            Enemy::new(
-                Vector2::<f64>::new(50.0, 50.0),
-                Vector2::<f64>::new(0.0, 0.0),
-                20.0,
-                constants::YELLOW,
-            ),
-            Enemy::new(
-                Vector2::<f64>::new(50.0, 150.0),
-                Vector2::<f64>::new(1.0, 0.0),
-                20.0,
-                constants::BLUE,
-            ),
-        ];
-
         Scene {
             window_size,
-            player,
+            cell_collection,
             direction_marker,
-            enemies,
         }
     }
 
     pub fn update(&mut self, dt: f64, input_handler: &input_handler::InputHandler) {
-        let aim_direction = (input_handler.mouse_position - self.player.position).normalize();
-        self.direction_marker.position = self.player.position + aim_direction * self.player.radius;
+        let mut player = self.cell_collection.get_player();
+        let aim_direction = (input_handler.mouse_position - player.position).normalize();
+        self.direction_marker.position = player.position + aim_direction * player.radius;
 
         physics::integrate(self, dt);
 
@@ -65,9 +61,12 @@ impl Scene {
     }
 
     pub fn render(&self, transform: graphics::math::Matrix2d, graphics: &mut G2d) {
-        self.player.render(transform, graphics);
+        let player = self.cell_collection.get_player();
+        let enemies = self.cell_collection.get_enemies();
+
+        player.render(transform, graphics);
         self.direction_marker.render(transform, graphics);
-        for enemy in self.enemies.iter() {
+        for enemy in enemies.iter() {
             enemy.render(transform, graphics);
         }
     }

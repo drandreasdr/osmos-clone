@@ -34,12 +34,14 @@ impl InputHandler {
         button_args: ButtonArgs,
         window: &PistonWindow,
     ) {
+        let player = scene.cell_collection.get_player();
+
         if button_args.state == ButtonState::Press {
             match button_args.button {
-                Button::Keyboard(Key::Up) => scene.player.velocity[1] -= 10.0,
-                Button::Keyboard(Key::Down) => scene.player.velocity[1] += 10.0,
-                Button::Keyboard(Key::Left) => scene.player.velocity[0] -= 10.0,
-                Button::Keyboard(Key::Right) => scene.player.velocity[0] += 10.0,
+                Button::Keyboard(Key::Up) => player.velocity[1] -= 10.0,
+                Button::Keyboard(Key::Down) => player.velocity[1] += 10.0,
+                Button::Keyboard(Key::Left) => player.velocity[0] -= 10.0,
+                Button::Keyboard(Key::Right) => player.velocity[0] += 10.0,
                 Button::Mouse(MouseButton::Left) => self
                     .input_actions
                     .push(InputAction::LeftMouseClick(self.mouse_position)),

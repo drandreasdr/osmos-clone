@@ -1,9 +1,10 @@
 use super::scene;
 
 pub fn integrate(scene: &mut scene::Scene, time_step: f64) {
-    scene.player.position += time_step * scene.player.velocity;
+    scene.cell_collection.get_player_mut().position +=
+        time_step * scene.cell_collection.get_player().velocity;
 
-    for enemy in scene.enemies.iter_mut() {
+    for enemy in scene.cell_collection.get_enemies().iter_mut() {
         enemy.position += time_step * enemy.velocity;
     }
 }

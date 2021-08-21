@@ -4,21 +4,29 @@ extern crate graphics;
 extern crate opengl_graphics;
 use piston_window::*;
 
-pub struct Player {
+pub enum CellType {
+    Player,
+    NonPlayer,
+}
+
+pub struct Cell {
+    pub cell_type: CellType,
     pub position: Vector2<f64>,
     pub velocity: Vector2<f64>,
     pub radius: f64,
     pub color: constants::Color,
 }
 
-impl Player {
+impl Cell {
     pub fn new(
+        cell_type: CellType,
         position: Vector2<f64>,
         velocity: Vector2<f64>,
         radius: f64,
         color: constants::Color,
     ) -> Self {
-        Player {
+        Cell {
+            cell_type,
             position,
             velocity,
             radius,
@@ -41,40 +49,33 @@ impl Player {
     }
 }
 
-pub struct Enemy {
-    pub position: Vector2<f64>,
-    pub velocity: Vector2<f64>,
-    pub radius: f64,
-    pub color: constants::Color,
+pub struct CellCollection {
+    cells: Vec<Cell>,
 }
 
-impl Enemy {
-    pub fn new(
-        position: Vector2<f64>,
-        velocity: Vector2<f64>,
-        radius: f64,
-        color: constants::Color,
-    ) -> Self {
-        Enemy {
-            position,
-            velocity,
-            radius,
-            color,
-        }
+impl CellCollection {
+    pub fn new() -> CellCollection {
+        CellCollection { cells: Vec::new() }
     }
 
-    pub fn render(&self, transform: graphics::math::Matrix2d, graphics: &mut G2d) {
-        ellipse(
-            self.color,
-            [
-                self.position[0] - self.radius,
-                self.position[1] - self.radius,
-                self.radius * 2.0,
-                self.radius * 2.0,
-            ],
-            transform,
-            graphics,
-        );
+    pub fn add_cell(&mut self, cell: Cell) {
+        self.cells.push(cell);
+    }
+
+    pub fn get_player_mut(&mut self) -> &mut Cell {
+        return &mut self.cells[0];
+    }
+
+    pub fn get_player(&self) -> &Cell {
+        return &self.cells[0];
+    }
+
+    pub fn get_enemies_mut(&mut self) -> &mut [Cell] {
+        return &mut self.cells[1..];
+    }
+
+    pub fn get_enemies(&self) -> &[Cell] {
+        return &self.cells[1..];
     }
 }
 
