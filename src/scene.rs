@@ -17,23 +17,28 @@ pub struct Scene {
 impl Scene {
     pub fn new(window_size: (f64, f64)) -> Self {
         let mut cell_collection = CellCollection::new();
-        cell_collection.add_cell(Cell::new(CellType::Player,
+        cell_collection.add_cell(Cell::new(
+            CellType::Player,
             Vector2::<f64>::new(300.0, 300.0),
             Vector2::<f64>::new(0.0, 0.0),
             50.0,
             constants::RED,
         ));
 
-        cell_collection.add_cell(Cell::new(CellType::NonPlayer,
+        cell_collection.add_cell(Cell::new(
+            CellType::NonPlayer,
             Vector2::<f64>::new(50.0, 50.0),
-                Vector2::<f64>::new(0.0, 0.0),
-                20.0,
-                constants::YELLOW));
-                cell_collection.add_cell(Cell::new(CellType::NonPlayer,
-                    Vector2::<f64>::new(50.0, 150.0),
-                Vector2::<f64>::new(1.0, 0.0),
-                20.0,
-                constants::BLUE,));
+            Vector2::<f64>::new(0.0, 0.0),
+            20.0,
+            constants::YELLOW,
+        ));
+        cell_collection.add_cell(Cell::new(
+            CellType::NonPlayer,
+            Vector2::<f64>::new(50.0, 150.0),
+            Vector2::<f64>::new(1.0, 0.0),
+            20.0,
+            constants::BLUE,
+        ));
 
         let direction_marker = DirectionMarker::new(10.0);
 
@@ -49,7 +54,7 @@ impl Scene {
         let aim_direction = (input_handler.mouse_position - player.position).normalize();
         self.direction_marker.position = player.position + aim_direction * player.radius;
 
-        physics::integrate(self, dt);
+        //physics::integrate(self, dt);
 
         collisions::handle_collisions(self);
 

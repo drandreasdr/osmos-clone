@@ -34,7 +34,7 @@ impl InputHandler {
         button_args: ButtonArgs,
         window: &PistonWindow,
     ) {
-        let player = scene.cell_collection.get_player();
+        let player = scene.cell_collection.get_player_mut();
 
         if button_args.state == ButtonState::Press {
             match button_args.button {

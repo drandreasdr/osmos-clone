@@ -4,11 +4,13 @@ extern crate graphics;
 extern crate opengl_graphics;
 use piston_window::*;
 
+#[derive(Debug)]
 pub enum CellType {
     Player,
     NonPlayer,
 }
 
+#[derive(Debug)]
 pub struct Cell {
     pub cell_type: CellType,
     pub position: Vector2<f64>,
@@ -47,10 +49,14 @@ impl Cell {
             graphics,
         );
     }
+
+    pub fn overlapsWith(&self, other: &Cell) -> bool {
+        return (self.position - other.position).norm() > self.radius + other.radius;
+    }
 }
 
 pub struct CellCollection {
-    cells: Vec<Cell>,
+    pub cells: Vec<Cell>,
 }
 
 impl CellCollection {

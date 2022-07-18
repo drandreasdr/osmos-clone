@@ -7,7 +7,7 @@
 			"command": "cargo",
 			"args": [
 				"build",
-				"--target-dir=D:/rust_targets/osmos_clone/target"
+				"--target-dir=C:/rust_targets/osmos_clone/target"
 			],
 			"problemMatcher": [
 				"$rustc"
