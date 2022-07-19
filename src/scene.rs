@@ -1,5 +1,4 @@
 use super::cell_interaction_utility;
-use super::collisions;
 use super::constants;
 use super::entities::*;
 use super::input_handler;
