@@ -133,9 +133,8 @@ impl Scene {
         for pair in self.cell_collection.cells.iter().combinations(2) {
             let cell1 = pair[0];
             let cell2 = pair[1];
-            println!("{:?}, {:?}", cell1.position, cell2.position);
             if cell1.overlaps_with(&cell2) {
-                println!("{:?} overlaps with {:?}", cell1, cell2);
+                println!("{:?}\noverlaps with\n{:?}\n\n", cell1, cell2);
             }
         }
         //Check all against all cells for overlaps

@@ -51,7 +51,7 @@ impl Cell {
     }
 
     pub fn overlaps_with(&self, other: &Cell) -> bool {
-        return (self.position - other.position).norm() > self.radius + other.radius;
+        return (self.position - other.position).norm() < self.radius + other.radius;
     }
 }
 
