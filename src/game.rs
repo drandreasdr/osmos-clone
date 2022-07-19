@@ -38,18 +38,18 @@ impl Game {
 
         while let Some(event) = window.next() {
             if let Some(mouse_coordinates) = event.mouse_cursor_args() {
-                self.input_handler
-                    .handle_mouse_move(&mut self.scene, mouse_coordinates);
+                self.input_handler.handle_mouse_move(mouse_coordinates);
             }
 
             if let Some(button) = event.press_args() {
-                self.input_handler
-                    .handle_button_press_event(&mut self.scene, button);
+                self.input_handler.handle_button_press_event(button);
             }
 
             if let Some(button_args) = event.button_args() {
-                self.input_handler
-                    .handle_button_args(&mut self.scene, button_args, &window);
+                self.input_handler.handle_button_args(
+                    &mut self.scene.cell_collection.get_player_mut(),
+                    button_args
+                );
             }
 
             if let Some(update_args) = event.update_args() {

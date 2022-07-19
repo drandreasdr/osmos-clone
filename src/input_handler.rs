@@ -1,4 +1,4 @@
-use super::scene;
+use super::entities::Cell;
 use nalgebra::Vector2;
 use piston_window::*;
 
@@ -21,21 +21,18 @@ impl InputHandler {
         }
     }
 
-    pub fn handle_mouse_move(&mut self, scene: &mut scene::Scene, mouse_position: [f64; 2]) {
+    pub fn handle_mouse_move(&mut self, mouse_position: [f64; 2]) {
         self.mouse_position[0] = mouse_position[0];
         self.mouse_position[1] = mouse_position[1];
     }
 
-    pub fn handle_button_press_event(&self, scene: &mut scene::Scene, button: Button) {}
+    pub fn handle_button_press_event(&self, _button: Button) {}
 
     pub fn handle_button_args(
         &mut self,
-        scene: &mut scene::Scene,
-        button_args: ButtonArgs,
-        window: &PistonWindow,
+        player: &mut Cell,
+        button_args: ButtonArgs
     ) {
-        let player = scene.cell_collection.get_player_mut();
-
         if button_args.state == ButtonState::Press {
             match button_args.button {
                 Button::Keyboard(Key::Up) => player.velocity[1] -= 10.0,
