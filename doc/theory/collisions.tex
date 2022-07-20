@@ -16,6 +16,7 @@
 \begin{document}
 
 \section{Perfectly inelastic collision}
+\label{sec:prefectly_inelastic_collision}
 Two bodies A and B, with known masses and velocities collide and merge with each other, resulting in the body C. The problem is to find the velocity of the body C.
 
 \begin{figure}[h]
@@ -29,6 +30,16 @@ The bodies A and B collide if
 \begin{equation}
 r_A + r_B > d
 \end{equation}
+
+\subsection{Geometries after the collision}
+Since the bodies fully merge with each other:
+\begin{equation}
+\begin{split}
+A_C &= A_A + A_B\\
+r_C &= \sqrt{r_A^2 + r_B^2}
+\end{split}
+\end{equation}
+
 
 \subsection{Velocities after the collision}
 
@@ -81,7 +92,7 @@ Solving for $\vbs_{A'}$, we obtain
 \section{Partial merge}
 Two bodies A and B, with known masses and velocities, A being the largest, collide and partially merge with each other such that the larger body A absorbs part of the smaller body B. The result is an enlarged form of body A: A', and a diminished form of body B: B'.
 
-We will denote by C the part of B that is absorbed into A. The area of C is such that after the collision, the bodies are tangentially touching each other. The area of C obviously cannot be larger than the area of B.
+We will denote by C the part of B that is absorbed into A. The area of C is such that after the collision, the bodies are tangentially touching each other. The area of C obviously must be smaller than the area of B.
 
 We denote by $d$ the distance between (the center points of) A and B. Since the positions don't change during the collision process, $d$ is also the distance between A' and B'.
 
@@ -94,6 +105,7 @@ We denote by $d$ the distance between (the center points of) A and B. Since the 
 \subsection{Condition of collision}
 The bodies A and B collide if
 \begin{equation}
+\label{eq:collision_condition_partial_merge}
 r_A + r_B > d
 \end{equation}
 
@@ -114,35 +126,47 @@ and the following auxiliary conditions:
 \label{eq:partial_merge_auxiliary_conditions}
 \begin{split}
 A_{A'} &> A_A > A_B > A_{B'}\\
-A_C &<= A_B
+A_C &< A_B
 \end{split}
 \end{equation}
-Substituting $A = \pi r^2$ and solving for $r_A'$, $r_B'$ and $A_C$, we obtain:
+Substituting $A = \pi r^2$ into Equation \ref{eq:partial_merge_geometrical_relations} and solving for $r_A'$, $r_B'$ and $A_C$ gives:
+\begin{equation}
+\label{eq:geometries_after_merge_with_plusminus}
+\begin{split}
+r_{A'} &= \frac{1}{2}\left(d \pm \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
+r_{B'} &= \frac{1}{2}\left(d \mp \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
+A_C &= -\frac{\pi}{2}\left(r_A^2 - r_B^2 \mp d\sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
+\end{split}
+\end{equation}
+
+A bound on the region of validity of the above equation is given by the condition \ref{eq:partial_merge_auxiliary_conditions}b. In order to express this condition in terms of what is known originally, we insert it into Equation \ref{eq:partial_merge_geometrical_relations}, which gives:
+\begin{equation}
+\label{eq:region_of_validity}
+\begin{split}
+A_{A'} &< A_A + A_B\\
+A_{B'} &> 0\\
+\sqrt{r_A^2 + r_B^2} &< d
+\end{split}
+\end{equation}
+The third equation represents a bound on the region of validity of Equation \ref{eq:geometries_after_merge_with_plusminus}. The other bound is given by Equation \ref{eq:collision_condition_partial_merge}.
+
+We use Equation \ref{eq:partial_merge_auxiliary_conditions}a to resolve ambiguous solutions of the quadratic equations in Equation \ref{eq:geometries_after_merge_with_plusminus}. We also append the aforementioned bounds on the region of validity of the above equations, which finally gives:
 \begin{equation}
 \label{eq:geometries_after_merge}
 \begin{split}
 r_{A'} &= \frac{1}{2}\left(d + \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
 r_{B'} &= \frac{1}{2}\left(d - \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
 A_C &= -\frac{\pi}{2}\left(r_A^2 - r_B^2 - d\sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
-A_C &<= A_B
+&\sqrt{r_A^2 + r_B^2} < d < r_A + r_B
 \end{split}
 \end{equation}
-where Equation \ref{eq:partial_merge_auxiliary_conditions}a was used to resolve ambiguous solutions of the quadratic equations. Equation \ref{eq:partial_merge_auxiliary_conditions}b is appended in order to emphasize the range of validity of equations \ref{eq:geometries_after_merge}a--c.
 
 \subsection{The case of full absorption}
-The region of validity of Equations \ref{eq:geometries_after_merge}a--c is given by Equation \ref{eq:geometries_after_merge}d. The edge of this region is represented by an equal sign in Equation \ref{eq:geometries_after_merge}d. This means full absorption of B in to A.
-
-Inserting Equation \ref{eq:geometries_after_merge}d into Equation \ref{eq:partial_merge_geometrical_relations}, we obtain
+As per Equation \ref{eq:geometries_after_merge}d, full absorption of B into A is given by
 \begin{equation}
-\label{eq:geometrical_relations_for_full_absorption}
-\begin{split}
-A_{A'} &<= A_A + A_B\\
-A_{B'} &>= 0\\
-\sqrt{r_A^2 + r_B^2} &<= d
-\end{split}
+d <= \sqrt{r_A^2 + r_B^2}
 \end{equation}
-
-Equation \ref{eq:geometrical_relations_for_full_absorption}c can be used as a condition to check whether full absorption occurs.
+In this case, refer to Section \ref{sec:prefectly_inelastic_collision}.
 
 \subsection{The case of equality in size between A and B}
 TODO
