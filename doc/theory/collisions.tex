@@ -24,6 +24,14 @@ Two bodies A and B, with known masses and velocities collide and merge with each
 	\caption{Perfectly inelastic collision.}\label{fig:perfectly_inelastic_collision}
 \end{figure}
 
+\subsection{Condition of collision}
+The bodies A and B collide if
+\begin{equation}
+r_A + r_B > d
+\end{equation}
+
+\subsection{Velocities after the collision}
+
 Conservation of linear momentum:
 \begin{equation*}
 m_A\vbs_A + m_B\vbs_B = m_C\vbs_C
@@ -51,6 +59,8 @@ A body A with known velocity ejects a body B at a known velocity. We refer to th
 	\caption{Ejection of mass.}\label{fig:ejection}
 \end{figure}
 
+\subsection{Velocities after the ejection}
+
 Conservation of linear momentum:
 \begin{equation*}
 \begin{split}
@@ -69,13 +79,78 @@ Solving for $\vbs_{A'}$, we obtain
 \end{equation}
 
 \section{Partial merge}
-Two bodies A and B, with known masses and velocities, A being the largest, collide and partially merge with each other such that the larger body A absorbs part of the smaller body B. The part of B that is absorbed by A is denoted as C. The result is an enlarged form of body A: A', and a diminished form of body B: B'. The problem is to find the velocities of the bodies A' and B'.
+Two bodies A and B, with known masses and velocities, A being the largest, collide and partially merge with each other such that the larger body A absorbs part of the smaller body B. The result is an enlarged form of body A: A', and a diminished form of body B: B'.
+
+We will denote by C the part of B that is absorbed into A. The area of C is such that after the collision, the bodies are tangentially touching each other. The area of C obviously cannot be larger than the area of B.
+
+We denote by $d$ the distance between (the center points of) A and B. Since the positions don't change during the collision process, $d$ is also the distance between A' and B'.
 
 \begin{figure}[h]
 	\centering
 	{\includegraphics{figures/partial_merge.pdf}}
 	\caption{Partial merge of two bodies.}\label{fig:partial_merge}
 \end{figure}
+
+\subsection{Condition of collision}
+The bodies A and B collide if
+\begin{equation}
+r_A + r_B > d
+\end{equation}
+
+\subsection{Geometries after the collision}
+By nature of the merge process, as described above, we have the following equations:
+\begin{equation}
+\label{eq:partial_merge_geometrical_relations}
+\begin{split}
+A_{A'} &= A_A + A_C\\
+A_{B'} &= A_B - A_C\\
+r_{A'} + r_{B'} &= d
+\end{split}
+\end{equation}
+%
+and the following auxiliary conditions:
+%
+\begin{equation}
+\label{eq:partial_merge_auxiliary_conditions}
+\begin{split}
+A_{A'} &> A_A > A_B > A_{B'}\\
+A_C &<= A_B
+\end{split}
+\end{equation}
+Substituting $A = \pi r^2$ and solving for $r_A'$, $r_B'$ and $A_C$, we obtain:
+\begin{equation}
+\label{eq:geometries_after_merge}
+\begin{split}
+r_{A'} &= \frac{1}{2}\left(d + \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
+r_{B'} &= \frac{1}{2}\left(d - \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
+A_C &= -\frac{\pi}{2}\left(r_A^2 - r_B^2 - d\sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
+A_C &<= A_B
+\end{split}
+\end{equation}
+where Equation \ref{eq:partial_merge_auxiliary_conditions}a was used to resolve ambiguous solutions of the quadratic equations. Equation \ref{eq:partial_merge_auxiliary_conditions}b is appended in order to emphasize the range of validity of equations \ref{eq:geometries_after_merge}a--c.
+
+\subsection{The case of full absorption}
+The region of validity of Equations \ref{eq:geometries_after_merge}a--c is given by Equation \ref{eq:geometries_after_merge}d. The edge of this region is represented by an equal sign in Equation \ref{eq:geometries_after_merge}d. This means full absorption of B in to A.
+
+Inserting Equation \ref{eq:geometries_after_merge}d into Equation \ref{eq:partial_merge_geometrical_relations}, we obtain
+\begin{equation}
+\label{eq:geometrical_relations_for_full_absorption}
+\begin{split}
+A_{A'} &<= A_A + A_B\\
+A_{B'} &>= 0\\
+\sqrt{r_A^2 + r_B^2} &<= d
+\end{split}
+\end{equation}
+
+Equation \ref{eq:geometrical_relations_for_full_absorption}c can be used as a condition to check whether full absorption occurs.
+
+\subsection{The case of equality in size between A and B}
+TODO
+
+
+
+\subsection{Velocities after the collision}
+We want to find the velocities of the bodies A' and B'.
 
 We assume that C is released from body B without any impulse or energy transfer between B and C. Thus, the velocity of B is completely unaffected during the collision:
 \begin{equation}
