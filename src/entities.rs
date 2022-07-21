@@ -74,6 +74,10 @@ impl CellCollection {
         return key;
     }
 
+    pub fn delete_cell(&mut self, key: &i64) {
+        self.cells.remove(&key);
+    }
+
     pub fn get_keys(&self) -> Keys<i64, Cell> {
         return self.cells.keys();
     }
