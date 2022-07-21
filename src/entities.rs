@@ -52,42 +52,42 @@ impl Cell {
 
 pub struct CellCollection {
     cells: HashMap<i64, Cell>,
-    largest_index: i64,
+    largest_key: i64,
 }
 
 impl CellCollection {
     pub fn new() -> CellCollection {
         CellCollection {
             cells: HashMap::new(),
-            largest_index: 0,
+            largest_key: 0,
         }
     }
 
-    fn generate_index(&mut self) -> i64 {
-        self.largest_index += 1;
-        return self.largest_index;
+    fn generate_key(&mut self) -> i64 {
+        self.largest_key += 1;
+        return self.largest_key;
     }
 
     pub fn add_cell(&mut self, cell: Cell) -> i64 {
-        let index = self.generate_index();
-        self.cells.insert(index, cell);
-        return index;
+        let key = self.generate_key();
+        self.cells.insert(key, cell);
+        return key;
     }
 
     pub fn get_keys(&self) -> Keys<i64, Cell> {
         return self.cells.keys();
     }
 
-    pub fn get_cell_mut(&mut self, index: i64) -> &mut Cell {
-        return self.cells.get_mut(&index).unwrap();
+    pub fn get_cell_mut(&mut self, key: i64) -> &mut Cell {
+        return self.cells.get_mut(&key).unwrap();
     }
 
     pub fn get_cells_mut(&mut self) -> ValuesMut<i64, Cell> {
         return self.cells.values_mut();
     }
 
-    pub fn get_cell(&self, index: i64) -> &Cell {
-        return self.cells.get(&index).unwrap();
+    pub fn get_cell(&self, key: i64) -> &Cell {
+        return self.cells.get(&key).unwrap();
     }
 
     pub fn get_cells(&self) -> Values<i64, Cell> {

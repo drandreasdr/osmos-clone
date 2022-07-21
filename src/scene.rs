@@ -14,15 +14,15 @@ pub struct Scene {
     pub window_size: (f64, f64),
     pub cell_collection: CellCollection,
     pub direction_marker: DirectionMarker,
-    player_index: i64,
-    objects_to_delete: Vec<i64>
+    player_key: i64,
+    objects_to_delete: Vec<i64>,
 }
 
 impl Scene {
     pub fn new(window_size: (f64, f64)) -> Self {
         let mut cell_collection = CellCollection::new();
 
-        let player_index = cell_collection.add_cell(Cell::new(
+        let player_key = cell_collection.add_cell(Cell::new(
             Vector2::<f64>::new(300.0, 300.0),
             Vector2::<f64>::new(0.0, 0.0),
             50.0,
@@ -50,17 +50,17 @@ impl Scene {
             window_size,
             cell_collection,
             direction_marker,
-            player_index,
-            objects_to_delete
+            player_key,
+            objects_to_delete,
         }
     }
 
     pub fn get_player(&self) -> &Cell {
-        return self.cell_collection.get_cell(self.player_index);
+        return self.cell_collection.get_cell(self.player_key);
     }
 
     pub fn get_player_mut(&mut self) -> &mut Cell {
-        return self.cell_collection.get_cell_mut(self.player_index);
+        return self.cell_collection.get_cell_mut(self.player_key);
     }
 
     pub fn update(&mut self, dt: f64, input_handler: &input_handler::InputHandler) {
@@ -127,9 +127,9 @@ impl Scene {
 
     fn handle_cell_collisions(&self) {
         println!("---");
-        for pair in self.cell_collection.get_cells().combinations(2) {
-            let cell1 = pair[0];
-            let cell2 = pair[1];
+        for pair in self.cell_collection.get_keys().combinations(2) {
+            let key1 = pair[0];
+            let key2 = pair[1];
             if cell1.overlaps_with(&cell2) {
                 // let new_velocities = cell_interaction_utility::get_velocities_after_collision(cell1, cell2);
                 // let objects_to_delete = cell_interaction_utility::should_delete_after_collision(cell1, cell2);
