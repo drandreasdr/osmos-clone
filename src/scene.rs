@@ -1,10 +1,12 @@
 use super::cell_interaction_utility;
 use super::constants;
+use super::constants::CollisionType;
 use super::entities::*;
 use super::input_handler;
 use super::physics;
 use itertools::Itertools;
 use nalgebra::Vector2;
+use std::collections::hash_map::HashMap;
 extern crate graphics;
 extern crate opengl_graphics;
 
@@ -14,8 +16,8 @@ pub struct Scene {
     pub window_size: (f64, f64),
     pub cell_collection: CellCollection,
     pub direction_marker: DirectionMarker,
-    player_key: i64,
-    keys_to_delete: Vec<i64>,
+    player_key: i32,
+    keys_to_delete: Vec<i32>, //keys to delete at the end of the update
 }
 
 impl Scene {
@@ -128,34 +130,30 @@ impl Scene {
     }
 
     fn handle_cell_collisions(&mut self) {
-        println!("---");
+        let mut new_radii = HashMap::new();
+        let mut new_velocities = HashMap::new();
         for pair in self.cell_collection.get_keys().combinations(2) {
-            let key1 = *pair[0];
-            let key2 = *pair[1];
+            let key0 = *pair[0];
+            let key1 = *pair[1];
+            let cell0 = self.cell_collection.get_cell(key0);
             let cell1 = self.cell_collection.get_cell(key1);
-            let cell2 = self.cell_collection.get_cell(key2);
-            if cell1.overlaps_with(&cell2) {
-                if cell1.radius > cell2.radius {
-                    self.keys_to_delete.push(key2);
-                } else {
-                    self.keys_to_delete.push(key1);
-                }
-                // let new_velocities = cell_interaction_utility::get_velocities_after_collision(cell1, cell2);
-                // let keys_to_delete = cell_interaction_utility::should_delete_after_collision(cell1, cell2);
-                // match cell_interaction_utility::get_collision_type() {
-                //     case PerfectlyInelasticCollision {
-                //         cell_interaction_utility::get_
-                //     }
-                //     case PartialMerge {
 
-                //     }
-                // }
+            let collision_calculator =
+                cell_interaction_utility::CollisionCalculator::new(cell0, cell1);
+            if collision_calculator.collision_type == CollisionType::NoCollision {
+                continue;
+            }
+
+            for i in 0..2 {
+                let key_i = *pair[i];
+                if collision_calculator.should_delete_cell[i] {
+                    self.keys_to_delete.push(key_i);
+                } else {
+                    new_radii.insert(key_i, collision_calculator.new_radii[i]);
+                    new_velocities.insert(key_i, collision_calculator.new_velocities[i]);
+                }
             }
         }
-        //Check all against all cells for overlaps
-        //For each overlap:
-        // find the new radii such that the cells are exactly tangent to each other, and the corresponding transferred area
-        // find the new velocities
     }
 
     fn handle_object_deletion(&mut self) {

@@ -10,3 +10,10 @@ pub const TRANSPARENT: Color = [0.0, 0.0, 0.0, 0.0];
 
 pub const RELATIVE_VELOCITY_MAGNITUDE_EJECTED_PARTICLE: f64 = 50.0;
 pub const RADIUS_EJECTED_PARTICLE: f64 = 10.0;
+
+#[derive(Eq, PartialEq)]
+pub enum CollisionType {
+    NoCollision,
+    FullMerge,
+    PartialMerge,
+}

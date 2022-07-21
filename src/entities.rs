@@ -44,15 +44,11 @@ impl Cell {
             graphics,
         );
     }
-
-    pub fn overlaps_with(&self, other: &Cell) -> bool {
-        return (self.position - other.position).norm() < self.radius + other.radius;
-    }
 }
 
 pub struct CellCollection {
-    cells: HashMap<i64, Cell>,
-    largest_key: i64,
+    cells: HashMap<i32, Cell>,
+    largest_key: i32,
 }
 
 impl CellCollection {
@@ -63,39 +59,39 @@ impl CellCollection {
         }
     }
 
-    fn generate_key(&mut self) -> i64 {
+    fn generate_key(&mut self) -> i32 {
         self.largest_key += 1;
-        return self.largest_key;
+        self.largest_key
     }
 
-    pub fn add_cell(&mut self, cell: Cell) -> i64 {
+    pub fn add_cell(&mut self, cell: Cell) -> i32 {
         let key = self.generate_key();
         self.cells.insert(key, cell);
-        return key;
+        key
     }
 
-    pub fn delete_cell(&mut self, key: &i64) {
+    pub fn delete_cell(&mut self, key: &i32) {
         self.cells.remove(&key);
     }
 
-    pub fn get_keys(&self) -> Keys<i64, Cell> {
-        return self.cells.keys();
+    pub fn get_keys(&self) -> Keys<i32, Cell> {
+        self.cells.keys()
     }
 
-    pub fn get_cell_mut(&mut self, key: i64) -> &mut Cell {
-        return self.cells.get_mut(&key).unwrap();
+    pub fn get_cell_mut(&mut self, key: i32) -> &mut Cell {
+        self.cells.get_mut(&key).unwrap()
     }
 
-    pub fn get_cells_mut(&mut self) -> ValuesMut<i64, Cell> {
-        return self.cells.values_mut();
+    pub fn get_cells_mut(&mut self) -> ValuesMut<i32, Cell> {
+        self.cells.values_mut()
     }
 
-    pub fn get_cell(&self, key: i64) -> &Cell {
-        return self.cells.get(&key).unwrap();
+    pub fn get_cell(&self, key: i32) -> &Cell {
+        self.cells.get(&key).unwrap()
     }
 
-    pub fn get_cells(&self) -> Values<i64, Cell> {
-        return self.cells.values();
+    pub fn get_cells(&self) -> Values<i32, Cell> {
+        self.cells.values()
     }
 }
 
