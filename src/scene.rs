@@ -138,11 +138,13 @@ impl Scene {
             let cell0 = self.cell_collection.get_cell(key0);
             let cell1 = self.cell_collection.get_cell(key1);
 
-            let collision_calculator =
+            let mut collision_calculator =
                 cell_interaction_utility::CollisionCalculator::new(cell0, cell1);
+            collision_calculator.calculate();
             if collision_calculator.collision_type == CollisionType::NoCollision {
                 continue;
             }
+            println!("COLLISION");
 
             for i in 0..2 {
                 let key_i = *pair[i];
@@ -157,6 +159,10 @@ impl Scene {
     }
 
     fn handle_object_deletion(&mut self) {
+        if self.keys_to_delete.contains(&self.player_key) {
+            panic!("PLAYER DELETED!");
+        }
+
         for key in self.keys_to_delete.iter() {
             self.cell_collection.delete_cell(key);
         }
