@@ -46,10 +46,8 @@ impl Game {
             }
 
             if let Some(button_args) = event.button_args() {
-                self.input_handler.handle_button_args(
-                    &mut self.scene.cell_collection.get_player_mut(),
-                    button_args
-                );
+                self.input_handler
+                    .handle_button_args(&mut self.scene.get_player_mut(), button_args);
             }
 
             if let Some(update_args) = event.update_args() {

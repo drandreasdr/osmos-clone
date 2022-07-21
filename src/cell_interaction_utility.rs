@@ -1,6 +1,5 @@
 use super::constants;
 use super::entities::Cell;
-use super::entities::CellType;
 use nalgebra::Vector2;
 use std::f64::consts::PI;
 
@@ -35,7 +34,6 @@ pub fn create_ejected_particle(
         constants::RELATIVE_VELOCITY_MAGNITUDE_EJECTED_PARTICLE * aim_direction + player_velocity;
 
     Cell::new(
-        CellType::NonPlayer,
         ejected_particle_position,
         ejected_particle_velocity,
         constants::RADIUS_EJECTED_PARTICLE,

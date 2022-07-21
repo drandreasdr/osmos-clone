@@ -3,16 +3,12 @@ use nalgebra::Vector2;
 extern crate graphics;
 extern crate opengl_graphics;
 use piston_window::*;
-
-#[derive(Debug)]
-pub enum CellType {
-    Player,
-    NonPlayer,
-}
+use std::collections::hash_map::HashMap;
+use std::collections::hash_map::Values;
+use std::collections::hash_map::ValuesMut;
 
 #[derive(Debug)]
 pub struct Cell {
-    pub cell_type: CellType,
     pub position: Vector2<f64>,
     pub velocity: Vector2<f64>,
     pub radius: f64,
@@ -21,14 +17,12 @@ pub struct Cell {
 
 impl Cell {
     pub fn new(
-        cell_type: CellType,
         position: Vector2<f64>,
         velocity: Vector2<f64>,
         radius: f64,
         color: constants::Color,
     ) -> Self {
         Cell {
-            cell_type,
             position,
             velocity,
             radius,
@@ -56,32 +50,43 @@ impl Cell {
 }
 
 pub struct CellCollection {
-    pub cells: Vec<Cell>,
+    cells: HashMap<i64, Cell>,
+    largest_index: i64,
 }
 
 impl CellCollection {
     pub fn new() -> CellCollection {
-        CellCollection { cells: Vec::new() }
+        CellCollection {
+            cells: HashMap::new(),
+            largest_index: 0,
+        }
     }
 
-    pub fn add_cell(&mut self, cell: Cell) {
-        self.cells.push(cell);
+    pub fn add_cell(&mut self, cell: Cell) -> i64 {
+        let index = self.generate_index();
+        self.cells.insert(index, cell);
+        return index;
     }
 
-    pub fn get_player_mut(&mut self) -> &mut Cell {
-        return &mut self.cells[0];
+    fn generate_index(&mut self) -> i64 {
+        self.largest_index += 1;
+        return self.largest_index;
     }
 
-    pub fn get_player(&self) -> &Cell {
-        return &self.cells[0];
+    pub fn get_cell_mut(&mut self, index: i64) -> &mut Cell {
+        return self.cells.get_mut(&index).unwrap();
     }
 
-    pub fn get_enemies_mut(&mut self) -> &mut [Cell] {
-        return &mut self.cells[1..];
+    pub fn get_cells_mut(&mut self) -> ValuesMut<i64, Cell> {
+        return self.cells.values_mut();
     }
 
-    pub fn get_enemies(&self) -> &[Cell] {
-        return &self.cells[1..];
+    pub fn get_cell(&self, index: i64) -> &Cell {
+        return self.cells.get(&index).unwrap();
+    }
+
+    pub fn get_cells(&self) -> Values<i64, Cell> {
+        return self.cells.values();
     }
 }
 
