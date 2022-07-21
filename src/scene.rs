@@ -15,6 +15,7 @@ pub struct Scene {
     pub cell_collection: CellCollection,
     pub direction_marker: DirectionMarker,
     player_index: i64,
+    objects_to_delete: Vec<i64>
 }
 
 impl Scene {
@@ -43,11 +44,14 @@ impl Scene {
 
         let direction_marker = DirectionMarker::new(10.0);
 
+        let objects_to_delete = Vec::new();
+
         Scene {
             window_size,
             cell_collection,
             direction_marker,
             player_index,
+            objects_to_delete
         }
     }
 
@@ -122,13 +126,21 @@ impl Scene {
     }
 
     fn handle_cell_collisions(&self) {
-        //Handle merge:
         println!("---");
         for pair in self.cell_collection.get_cells().combinations(2) {
             let cell1 = pair[0];
             let cell2 = pair[1];
             if cell1.overlaps_with(&cell2) {
-                println!("{:?}\noverlaps with\n{:?}\n\n", cell1, cell2);
+                // let new_velocities = cell_interaction_utility::get_velocities_after_collision(cell1, cell2);
+                // let objects_to_delete = cell_interaction_utility::should_delete_after_collision(cell1, cell2);
+                // match cell_interaction_utility::get_collision_type() {
+                //     case PerfectlyInelasticCollision {
+                //         cell_interaction_utility::get_
+                //     }
+                //     case PartialMerge {
+
+                //     }
+                // }
             }
         }
         //Check all against all cells for overlaps

@@ -4,6 +4,7 @@ extern crate graphics;
 extern crate opengl_graphics;
 use piston_window::*;
 use std::collections::hash_map::HashMap;
+use std::collections::hash_map::Keys;
 use std::collections::hash_map::Values;
 use std::collections::hash_map::ValuesMut;
 
@@ -62,15 +63,19 @@ impl CellCollection {
         }
     }
 
+    fn generate_index(&mut self) -> i64 {
+        self.largest_index += 1;
+        return self.largest_index;
+    }
+
     pub fn add_cell(&mut self, cell: Cell) -> i64 {
         let index = self.generate_index();
         self.cells.insert(index, cell);
         return index;
     }
 
-    fn generate_index(&mut self) -> i64 {
-        self.largest_index += 1;
-        return self.largest_index;
+    pub fn get_keys(&self) -> Keys<i64, Cell> {
+        return self.cells.keys();
     }
 
     pub fn get_cell_mut(&mut self, index: i64) -> &mut Cell {
