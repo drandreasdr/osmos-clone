@@ -135,7 +135,7 @@ Substituting $A = \pi r^2$ into Equation \ref{eq:partial_merge_geometrical_relat
 \begin{split}
 r_{A'} &= \frac{1}{2}\left(d \pm \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
 r_{B'} &= \frac{1}{2}\left(d \mp \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
-A_C &= -\frac{\pi}{2}\left(r_A^2 - r_B^2 \mp d\sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
+A_C &= \frac{\pi}{2}\left(-r_A^2 + r_B^2 \pm d\sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
 \end{split}
 \end{equation}
 
@@ -156,10 +156,12 @@ We use Equation \ref{eq:partial_merge_auxiliary_conditions}a to resolve ambiguou
 \begin{split}
 r_{A'} &= \frac{1}{2}\left(d + \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
 r_{B'} &= \frac{1}{2}\left(d - \sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
-A_C &= -\frac{\pi}{2}\left(r_A^2 - r_B^2 - d\sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
+A_C &= \frac{\pi}{2}\left(-r_A^2 + r_B^2 + d\sqrt{2r_A^2 + 2r_B^2 - d^2}\right)\\
 &\sqrt{r_A^2 + r_B^2} < d < r_A + r_B
 \end{split}
 \end{equation}
+
+By inserting the two limits of $d$ shown in Equation \ref{eq:geometries_after_merge}d into Equation \ref{eq:geometries_after_merge}c, we can verify that in the limit case of full absorption, $A_C(d = \sqrt{r_A^2 + r_B^2}) = A_B$ and in the limit case of no collision, $A_C(d = r_A + r_B) = 0$.
 
 \subsection{The case of full absorption}
 As per Equation \ref{eq:geometries_after_merge}d, full absorption of B into A is given by
