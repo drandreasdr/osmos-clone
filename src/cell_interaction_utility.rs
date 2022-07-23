@@ -57,9 +57,12 @@ pub fn get_new_player_velocity_after_ejection(
     new_velocity_player
 }
 
+/// Calculates parameters revelant to the collision between two cells. Meant to be a short-lived utility struct
+/// For the purposes of the internal calculations of this struct, the cells are reordered such that the largest is the first one
+///  in any case, the order of the results are guaranteed to be with respect to the original order, so the user of the struct doesn't need to worry about this detail
 pub struct CollisionCalculator<'a> {
-    cell0: &'a Cell,
-    cell1: &'a Cell,
+    cells: [&'a Cell; 2],
+    is_cell_order_reversed_internally: bool,
     pub collision_type: constants::CollisionType,
     pub new_radii: [f64; 2],
     pub new_velocities: [Vector2<f64>; 2],
@@ -67,10 +70,16 @@ pub struct CollisionCalculator<'a> {
 }
 
 impl<'a> CollisionCalculator<'a> {
-    pub fn new(cell0: &'a Cell, cell1: &'a Cell) -> Self {
+    pub fn new(cells_in: [&'a Cell; 2]) -> Self {
+        let mut cells = cells_in;
+        let is_cell_order_reversed_internally = cells[0].radius > cells[1].radius;
+        if is_cell_order_reversed_internally {
+            cells.reverse();
+        }
+
         CollisionCalculator {
-            cell0,
-            cell1,
+            cells,
+            is_cell_order_reversed_internally,
             collision_type: constants::CollisionType::NoCollision,
             new_radii: [0.0; 2],
             new_velocities: [Vector2::<f64>::new(0.0, 0.0); 2],
@@ -88,14 +97,24 @@ impl<'a> CollisionCalculator<'a> {
         self.new_radii = self.get_radii_after_collision();
         self.new_velocities = self.get_velocities_after_collision();
         self.should_delete_cell = self.get_should_delete_cell_after_collision();
+
+        if self.is_cell_order_reversed_internally {
+            //We need to reverse the order of the results in order to respect the original cell order
+            self.new_radii.reverse();
+            self.new_velocities.reverse();
+            self.should_delete_cell.reverse();
+        }
     }
 
     fn get_collision_type(&self) -> constants::CollisionType {
-        let radius0 = self.cell0.radius;
-        let radius1 = self.cell1.radius;
-        let distance = (self.cell0.position - self.cell1.position).norm();
+        let radius0 = self.cells[0].radius;
+        let radius1 = self.cells[1].radius;
+        let distance = (self.cells[0].position - self.cells[1].position).norm();
         if radius0 + radius1 <= distance {
             return constants::CollisionType::NoCollision;
+        }
+        if radius0 == radius1 {
+            return constants::CollisionType::Bounce;
         }
         if radius0.powf(2.0) + radius1.powf(2.0) <= distance.powf(2.0) {
             return constants::CollisionType::FullMerge;
@@ -104,9 +123,11 @@ impl<'a> CollisionCalculator<'a> {
     }
 
     fn get_radii_after_collision(&self) -> [f64; 2] {
-        let radius0 = self.cell0.radius;
-        let radius1 = self.cell1.radius;
-        let distance = (self.cell0.position - self.cell1.position).norm();
+        let radius0 = self.cells[0].radius;
+        let radius1 = self.cells[1].radius;
+        let position0 = self.cells[0].position;
+        let position1 = self.cells[1].position;
+        let distance = (position0 - position1).norm();
 
         let root_term =
             (2.0 * radius0.powf(2.0) + 2.0 * radius1.powf(2.0) - distance.powf(2.0)).sqrt();
@@ -116,9 +137,34 @@ impl<'a> CollisionCalculator<'a> {
     }
 
     pub fn get_velocities_after_collision(&self) -> [Vector2<f64>; 2] {
-        [Vector2::<f64>::new(1.0, 1.0); 2]
+        let radius0 = self.cells[0].radius;
+        let radius1 = self.cells[1].radius;
+        let position0 = self.cells[0].position;
+        let position1 = self.cells[1].position;
+        let velocity0 = self.cells[0].velocity;
+        let velocity1 = self.cells[0].velocity;
+        let distance = (position0 - position1).norm();
+        let area0 = PI * radius0.powf(2.0);
+        let area_transferred = PI / 2.0
+            * (-radius0.powf(2.0)
+                + radius1.powf(2.0)
+                + distance
+                    * (2.0 * radius0.powf(2.0) + 2.0 * radius1.powf(2.0) - distance.powf(2.0))
+                        .sqrt());
+
+        let new_velocity0 = area0 / (area0 + area_transferred) * velocity0
+            + area_transferred / (area0 + area_transferred) * velocity1;
+        let new_velocity1 = velocity1;
+
+        [new_velocity0, new_velocity1]
     }
     pub fn get_should_delete_cell_after_collision(&self) -> [bool; 2] {
-        [true; 2]
+        let mut result = [false, false];
+
+        if self.collision_type == constants::CollisionType::FullMerge {
+            result[1] = true;
+        }
+
+        result
     }
 }

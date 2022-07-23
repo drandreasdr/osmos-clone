@@ -139,7 +139,7 @@ impl Scene {
             let cell1 = self.cell_collection.get_cell(key1);
 
             let mut collision_calculator =
-                cell_interaction_utility::CollisionCalculator::new(cell0, cell1);
+                cell_interaction_utility::CollisionCalculator::new([cell0, cell1]);
             collision_calculator.calculate();
             if collision_calculator.collision_type == CollisionType::NoCollision {
                 continue;
@@ -156,6 +156,7 @@ impl Scene {
                 }
             }
         }
+
     }
 
     fn handle_object_deletion(&mut self) {

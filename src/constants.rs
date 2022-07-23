@@ -14,6 +14,7 @@ pub const RADIUS_EJECTED_PARTICLE: f64 = 10.0;
 #[derive(Eq, PartialEq)]
 pub enum CollisionType {
     NoCollision,
+    Bounce,
     FullMerge,
     PartialMerge,
 }
