@@ -1,4 +1,5 @@
 use super::constants;
+use super::constants::CollisionType;
 use super::entities::Cell;
 use nalgebra::Vector2;
 use std::f64::consts::PI;
@@ -63,7 +64,7 @@ pub fn get_new_player_velocity_after_ejection(
 pub struct CollisionCalculator<'a> {
     cells: [&'a Cell; 2],
     is_cell_order_reversed_internally: bool,
-    pub collision_type: constants::CollisionType,
+    pub collision_type: CollisionType,
     pub new_radii: [f64; 2],
     pub new_velocities: [Vector2<f64>; 2],
     pub should_delete_cell: [bool; 2],
@@ -80,7 +81,7 @@ impl<'a> CollisionCalculator<'a> {
         CollisionCalculator {
             cells,
             is_cell_order_reversed_internally,
-            collision_type: constants::CollisionType::NoCollision,
+            collision_type: CollisionType::NoCollision,
             new_radii: [0.0; 2],
             new_velocities: [Vector2::<f64>::new(0.0, 0.0); 2],
             should_delete_cell: [false; 2],
@@ -90,7 +91,7 @@ impl<'a> CollisionCalculator<'a> {
     pub fn calculate(&mut self) {
         self.collision_type = self.get_collision_type();
 
-        if self.collision_type == constants::CollisionType::NoCollision {
+        if self.collision_type == CollisionType::NoCollision {
             return;
         }
 
@@ -106,20 +107,20 @@ impl<'a> CollisionCalculator<'a> {
         }
     }
 
-    fn get_collision_type(&self) -> constants::CollisionType {
+    fn get_collision_type(&self) -> CollisionType {
         let radius0 = self.cells[0].radius;
         let radius1 = self.cells[1].radius;
         let distance = (self.cells[0].position - self.cells[1].position).norm();
         if radius0 + radius1 <= distance {
-            return constants::CollisionType::NoCollision;
+            return CollisionType::NoCollision;
         }
         if radius0 == radius1 {
-            return constants::CollisionType::Bounce;
+            return CollisionType::Bounce;
         }
         if radius0.powf(2.0) + radius1.powf(2.0) <= distance.powf(2.0) {
-            return constants::CollisionType::FullMerge;
+            return CollisionType::FullMerge;
         }
-        return constants::CollisionType::PartialMerge;
+        return CollisionType::PartialMerge;
     }
 
     fn get_radii_after_collision(&self) -> [f64; 2] {
@@ -161,7 +162,7 @@ impl<'a> CollisionCalculator<'a> {
     pub fn get_should_delete_cell_after_collision(&self) -> [bool; 2] {
         let mut result = [false, false];
 
-        if self.collision_type == constants::CollisionType::FullMerge {
+        if self.collision_type == CollisionType::FullMerge {
             result[1] = true;
         }
 
