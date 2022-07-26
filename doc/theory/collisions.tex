@@ -108,12 +108,22 @@ Conservation of kinetic energy:
 \label{eq:elastic_collision_energy_conservation}
 \frac{1}{2}m_A(v_{A\perp}^2+v_{A//}^2) + \frac{1}{2}m_B(v_{B\perp}^2+v_{B//}^2) = \frac{1}{2}m_A(v_{A\perp}'^2+v_{A//}'^2) + \frac{1}{2}m_B(v_{B\perp}'^2+v_{B//}'^2)
 \end{equation}
-Solving Equations \ref{eq:elastic_collision_momentum_conservation} -- \ref{eq:elastic_collision_energy_conservation} for the "primed" velocity components gives:
+Solving Equations \ref{eq:elastic_collision_momentum_conservation} -- \ref{eq:elastic_collision_energy_conservation} for the velocity components after the collision gives:
 %Wolfram Alpha: solve {m*a+n*b==m*A+n*B, c==C, d==D, m*(a^2+c^2)+n*(b^2+d^2)==m*(A^2+C^2)+n*(B^2+D^2)} for {A, B, C, D}
 \begin{equation}
 \begin{split}
-v_{A\perp}' &= \frac{m_Av_{A\perp} - m_Av_{A\perp} + 2m_Bv_{B\perp}}{m_A+m_B}\\
-v_{B\perp}' &= -\frac{m_Av_{B\perp} - m_Av_{B\perp} - 2m_Bv_{A\perp}}{m_A+m_B}\\
+v_{A\perp}' &= \frac{(m_A - m_B)v_{A\perp} + 2m_Bv_{B\perp}}{m_A+m_B}\\
+v_{B\perp}' &= -\frac{(m_A - m_B)v_{B\perp} - 2m_Bv_{A\perp}}{m_A+m_B}\\
+v_{A//}' &= v_{A//}\\
+v_{B//}' &= v_{B//}\\
+\end{split}
+\end{equation}
+
+If the masses are equal:
+\begin{equation}
+\begin{split}
+v_{A\perp}' &= v_{B\perp}\\
+v_{B\perp}' &= v_{A\perp}\\
 v_{A//}' &= v_{A//}\\
 v_{B//}' &= v_{B//}\\
 \end{split}
