@@ -168,7 +168,7 @@ impl<'a> CollisionCalculator<'a> {
         let position0 = self.cells[0].position;
         let position1 = self.cells[1].position;
         let velocity0 = self.cells[0].velocity;
-        let velocity1 = self.cells[0].velocity;
+        let velocity1 = self.cells[1].velocity;
         let distance = (position0 - position1).norm();
         let area0 = PI * radius0.powf(2.0);
         let area1 = PI * radius1.powf(2.0);
