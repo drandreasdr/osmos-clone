@@ -98,20 +98,12 @@ impl Scene {
     }
 
     fn handle_ejection(&mut self, mouse_position: Vector2<f64>) {
-        let player = self.get_player();
+        let mut ejection_calculator =
+            cell_interaction_utility::EjectionCalculator::new(self.get_player());
+        ejection_calculator.calculate(mouse_position);
 
-        let new_cell = cell_interaction_utility::create_ejected_particle(
-            mouse_position,
-            player.position,
-            player.velocity,
-            player.radius,
-        );
-
-        let new_player_velocity = cell_interaction_utility::get_new_player_velocity_after_ejection(
-            player.velocity,
-            player.radius,
-            new_cell.velocity,
-        );
+        let new_cell = ejection_calculator.ejected_particle.unwrap();
+        let new_player_velocity = ejection_calculator.new_player_velocity;
 
         self.cell_collection.add_cell(new_cell);
         self.get_player_mut().velocity = new_player_velocity;
@@ -163,7 +155,6 @@ impl Scene {
         for (key, velocity) in new_velocities.iter() {
             self.cell_collection.get_cell_mut(*key).velocity = *velocity;
         }
-
     }
 
     fn handle_object_deletion(&mut self) {

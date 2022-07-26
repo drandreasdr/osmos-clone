@@ -20,42 +20,54 @@ pub fn get_velocity_factors_for_wall_bounce(
     result
 }
 
-pub fn create_ejected_particle(
-    mouse_position: Vector2<f64>,
-    player_position: Vector2<f64>,
-    player_velocity: Vector2<f64>,
-    player_radius: f64,
-) -> Cell {
-    let aim_direction = (mouse_position - player_position).normalize();
-
-    let ejected_particle_position =
-        player_position + aim_direction * (player_radius + constants::RADIUS_EJECTED_PARTICLE);
-
-    let ejected_particle_velocity =
-        constants::RELATIVE_VELOCITY_MAGNITUDE_EJECTED_PARTICLE * aim_direction + player_velocity;
-
-    Cell::new(
-        ejected_particle_position,
-        ejected_particle_velocity,
-        constants::RADIUS_EJECTED_PARTICLE,
-        constants::WHITE,
-    )
+pub struct EjectionCalculator<'a> {
+    player: &'a Cell,
+    pub ejected_particle: Option<Cell>,
+    pub new_player_velocity: Vector2<f64>,
 }
 
-pub fn get_new_player_velocity_after_ejection(
-    player_current_velocity: Vector2<f64>,
-    player_radius: f64,
-    ejected_particle_velocity: Vector2<f64>,
-) -> Vector2<f64> {
-    let area_player = PI * player_radius * player_radius;
-    let area_ejected_particle =
-        PI * constants::RADIUS_EJECTED_PARTICLE * constants::RADIUS_EJECTED_PARTICLE;
+impl<'a> EjectionCalculator<'a> {
+    pub fn new(player: &'a Cell) -> Self {
+        EjectionCalculator {
+            player,
+            ejected_particle: None,
+            new_player_velocity: Vector2::<f64>::new(0.0, 0.0),
+        }
+    }
 
-    let new_velocity_player = area_player / (area_player - area_ejected_particle)
-        * player_current_velocity
-        - area_ejected_particle / (area_player - area_ejected_particle) * ejected_particle_velocity;
+    pub fn calculate(&mut self, mouse_position: Vector2<f64>) {
+        self.ejected_particle = Some(self.create_ejected_particle(mouse_position));
 
-    new_velocity_player
+        self.new_player_velocity = self.get_new_player_velocity_after_ejection();
+    }
+
+    fn create_ejected_particle(&mut self, mouse_position: Vector2<f64>) -> Cell {
+        let aim_direction = (mouse_position - self.player.position).normalize();
+
+        let ejected_particle_position = self.player.position
+            + aim_direction * (self.player.radius + constants::RADIUS_EJECTED_PARTICLE);
+
+        let ejected_particle_velocity = constants::RELATIVE_VELOCITY_MAGNITUDE_EJECTED_PARTICLE
+            * aim_direction
+            + self.player.velocity;
+
+        Cell::new(
+            ejected_particle_position,
+            ejected_particle_velocity,
+            constants::RADIUS_EJECTED_PARTICLE,
+            constants::WHITE,
+        )
+    }
+
+    fn get_new_player_velocity_after_ejection(&mut self) -> Vector2<f64> {
+        let area_player = PI * self.player.radius.powf(2.0);
+        let area_ejected_particle = PI * constants::RADIUS_EJECTED_PARTICLE.powf(2.0);
+        let new_velocity_player = area_player / (area_player - area_ejected_particle)
+            * self.player.velocity
+            - area_ejected_particle / (area_player - area_ejected_particle)
+                * self.ejected_particle.as_ref().unwrap().velocity;
+        new_velocity_player
+    }
 }
 
 /// Calculates parameters revelant to the collision between two cells. Meant to be a short-lived utility struct
