@@ -136,7 +136,6 @@ impl<'a> CollisionCalculator<'a> {
         match self.collision_type {
             CollisionType::FullMerge => {
                 new_radius0 = (radius0.powf(2.0) + radius1.powf(2.0)).sqrt();
-                new_radius1 = 0.0;
             }
             CollisionType::PartialMerge => {
                 let root_term =
@@ -183,7 +182,16 @@ impl<'a> CollisionCalculator<'a> {
                 new_velocity1 = velocity1;
             }
             CollisionType::Bounce => {
-                //TODO
+                let r_0_to_1 = position1 - position0;
+                let e_perp = r_0_to_1 / r_0_to_1.norm(); //perpendicular
+                let e_para = Vector2::<f64>::new(e_perp[1], -e_perp[0]); //parallel
+                let new_velocity0_perp = velocity1.dot(&e_perp);
+                let new_velocity1_perp = velocity0.dot(&e_perp);
+                let new_velocity0_para = velocity0.dot(&e_para);
+                let new_velocity1_para = velocity1.dot(&e_para);
+
+                new_velocity0 = new_velocity0_perp * e_perp + new_velocity0_para * e_para;
+                new_velocity1 = new_velocity1_perp * e_perp + new_velocity1_para * e_para;
             }
             CollisionType::NoCollision => {}
         };
