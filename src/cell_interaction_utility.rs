@@ -45,7 +45,7 @@ impl<'a> EjectionCalculator<'a> {
         let aim_direction = (mouse_position - self.player.position).normalize();
 
         let ejected_particle_position = self.player.position
-            + aim_direction * (self.player.radius + constants::RADIUS_EJECTED_PARTICLE);
+            + aim_direction * (self.player.radius * 1.05 + constants::RADIUS_EJECTED_PARTICLE);
 
         let ejected_particle_velocity = constants::RELATIVE_VELOCITY_MAGNITUDE_EJECTED_PARTICLE
             * aim_direction
