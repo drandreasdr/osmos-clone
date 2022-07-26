@@ -73,7 +73,7 @@ pub struct CollisionCalculator<'a> {
 impl<'a> CollisionCalculator<'a> {
     pub fn new(cells_in: [&'a Cell; 2]) -> Self {
         let mut cells = cells_in;
-        let is_cell_order_reversed_internally = cells[0].radius > cells[1].radius;
+        let is_cell_order_reversed_internally = cells[0].radius < cells[1].radius;
         if is_cell_order_reversed_internally {
             cells.reverse();
         }
@@ -111,13 +111,13 @@ impl<'a> CollisionCalculator<'a> {
         let radius0 = self.cells[0].radius;
         let radius1 = self.cells[1].radius;
         let distance = (self.cells[0].position - self.cells[1].position).norm();
-        if radius0 + radius1 <= distance {
+        if distance >= radius0 + radius1 {
             return CollisionType::NoCollision;
         }
         if radius0 == radius1 {
             return CollisionType::Bounce;
         }
-        if radius0.powf(2.0) + radius1.powf(2.0) <= distance.powf(2.0) {
+        if distance.powf(2.0) <= radius0.powf(2.0) + radius1.powf(2.0) {
             return CollisionType::FullMerge;
         }
         return CollisionType::PartialMerge;
