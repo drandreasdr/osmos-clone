@@ -12,12 +12,17 @@
 \newcommand{\bsbar}[1]{\boldsymbol{\bar{#1}}}
 \newcommand{\ulbsbar}[1]{\underline{\boldsymbol{\bar{#1}}}}
 \newcommand{\vbs}[0]{\boldsymbol{v}}
+\newcommand{\ebs}[0]{\boldsymbol{e}}
 
 \begin{document}
 
+
+
+
+%%%%%
 \section{Perfectly inelastic collision}
 \label{sec:prefectly_inelastic_collision}
-Two bodies A and B, with known masses and velocities collide and merge with each other, resulting in the body C. The problem is to find the velocity of the body C.
+Two bodies A and B, with known masses and velocities (with A being larger than B) collide and merge with each other. This happens in such a way that A consumes B, resulting in the body A'. The problem is to find the geometry and velocity of the body A'.
 
 \begin{figure}[h]
 	\centering
@@ -35,8 +40,8 @@ r_A + r_B > d
 Since the bodies fully merge with each other:
 \begin{equation}
 \begin{split}
-A_C &= A_A + A_B\\
-r_C &= \sqrt{r_A^2 + r_B^2}
+A_{A'} &= A_A + A_B\\
+r_{A'} &= \sqrt{r_A^2 + r_B^2}
 \end{split}
 \end{equation}
 
@@ -45,22 +50,82 @@ r_C &= \sqrt{r_A^2 + r_B^2}
 
 Conservation of linear momentum:
 \begin{equation*}
-m_A\vbs_A + m_B\vbs_B = m_C\vbs_C
+m_A\vbs_A + m_B\vbs_B = m_{A'}\vbs_{A'}
 \end{equation*}
 It is assumed that all bodies have the same density $\rho$ and thickness $t$, i.e. $m = \rho t A$, where $A$ is the area. Hence, we have
 \begin{equation*}
-A_A\vbs_A + A_B\vbs_B = A_C\vbs_C
+A_A\vbs_A + A_B\vbs_B = A_{A'}\vbs_{A'}
 \end{equation*}
-Since the bodies merge with each other, $A_C = A_A + A_B$, thus
+Since the bodies merge with each other, $A_{A'} = A_A + A_B$, thus
 \begin{equation*}
-A_A\vbs_A + A_B\vbs_B = (A_A + A_B)\vbs_C
+A_A\vbs_A + A_B\vbs_B = (A_A + A_B)\vbs_{A'}
 \end{equation*}
-Solving for $\vbs_C$, we obtain
+Solving for $\vbs_{A'}$, we obtain
 \begin{equation}
-\label{eq:perfectly_inelastic_collision}
-\vbs_C = \frac{A_A}{A_A + A_B}\vbs_A + \frac{A_B}{A_A + A_B}\vbs_B
+\label{eq:perfectly_inelastic_{A'}ollision}
+\vbs_{A'} = \frac{A_A}{A_A + A_B}\vbs_A + \frac{A_B}{A_A + A_B}\vbs_B
 \end{equation}
 
+
+
+
+%%%%%
+\section{Perfectly elastic collision}
+\label{sec:prefectly_elastic_collision}
+Two bodies A and B, with known masses and velocities (with A being larger than B) collide and bounce off each other without loss of energy. The problem is to find the velocities of A and B immediately after the collision.
+
+\begin{figure}[h]
+	\centering
+	{\includegraphics{figures/perfectly_elastic_collision.pdf}}
+	\caption{Perfectly elastic collision.}\label{fig:perfectly_elastic_collision}
+\end{figure}
+
+\subsection{Velocities after the collision}
+In the following, we will make use of a coordinate system aligned with the tangent line of the impacting bodies, consisting of the basis vectors $\ebs_{\perp}$ and $\ebs_{//}$. We can transform to/from this system as follows:
+\begin{equation*}
+\begin{split}
+v_{\perp} &= \vbs\cdot\ebs_{\perp}\\
+v_{//} &= \vbs\cdot\ebs_{//}\\
+\vbs &= v_{\perp}\ebs_{\perp} + v_{//}\ebs_{//}
+\end{split}
+\end{equation*}
+The basis vector $\ebs_{\perp}$ is normal to the tangent line, but otherwise the direction is arbitrary. The orientation of $\ebs_{//}$ should be such that the resulting system is right-oriented.
+
+In the direction normal to the tangent line of impact, linear momentum is conserved:
+\begin{equation}
+\label{eq:elastic_collision_momentum_conservation}
+m_Av_{A\perp} + m_Bv_{B\perp} = m_Av_{A\perp}' + m_Bv_{B\perp}'
+\end{equation}
+The velocity component in the direction parallel to the tangent line of impact is unchanged:
+\begin{equation}
+\begin{split}
+v_{A//} &= v_{A//}'\\
+v_{B//} &= v_{B//}'\\
+\end{split}
+\end{equation}
+Conservation of kinetic energy:
+\begin{equation}
+\label{eq:elastic_collision_energy_conservation}
+\frac{1}{2}m_A(v_{A\perp}^2+v_{A//}^2) + \frac{1}{2}m_B(v_{B\perp}^2+v_{B//}^2) = \frac{1}{2}m_A(v_{A\perp}'^2+v_{A//}'^2) + \frac{1}{2}m_B(v_{B\perp}'^2+v_{B//}'^2)
+\end{equation}
+Solving Equations \ref{eq:elastic_collision_momentum_conservation} -- \ref{eq:elastic_collision_energy_conservation} for the "primed" velocity components gives:
+%Wolfram Alpha: solve {m*a+n*b==m*A+n*B, c==C, d==D, m*(a^2+c^2)+n*(b^2+d^2)==m*(A^2+C^2)+n*(B^2+D^2)} for {A, B, C, D}
+\begin{equation}
+\begin{split}
+v_{A\perp}' &= \frac{m_Av_{A\perp} - m_Av_{A\perp} + 2m_Bv_{B\perp}}{m_A+m_B}\\
+v_{B\perp}' &= -\frac{m_Av_{B\perp} - m_Av_{B\perp} - 2m_Bv_{A\perp}}{m_A+m_B}\\
+v_{A//}' &= v_{A//}\\
+v_{B//}' &= v_{B//}\\
+\end{split}
+\end{equation}
+
+
+
+
+
+
+
+%%%%%
 \section{Ejection}
 A body A with known velocity ejects a body B at a known velocity. We refer to the resulting form of body A (now with diminished mass), as A'. The problem is to find the velocity of the body A'.
 
@@ -89,6 +154,13 @@ Solving for $\vbs_{A'}$, we obtain
 \vbs_{A'} = \frac{A_A}{(A_A - A_B)}\vbs_A - \frac{A_B}{(A_A - A_B)}\vbs_B
 \end{equation}
 
+
+
+
+
+
+
+%%%%%
 \section{Partial merge}
 Two bodies A and B, with known masses and velocities, A being the largest, collide and partially merge with each other such that the larger body A absorbs part of the smaller body B. The result is an enlarged form of body A: A', and a diminished form of body B: B'.
 
@@ -187,5 +259,7 @@ Furthermore, the body C will travel with the velocity $\vbs_B$ and be absorbed b
 \vbs_{A'} = \frac{A_A}{A_A + A_C}\vbs_A + \frac{A_C}{A_A + A_C}\vbs_B
 \end{equation}
 
+
+\section{Perfectly elastic collision}
 
 \end{document}
