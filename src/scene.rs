@@ -144,7 +144,6 @@ impl Scene {
             if collision_calculator.collision_type == CollisionType::NoCollision {
                 continue;
             }
-            println!("COLLISION");
 
             for i in 0..2 {
                 let key_i = *pair[i];
@@ -155,6 +154,14 @@ impl Scene {
                     new_velocities.insert(key_i, collision_calculator.new_velocities[i]);
                 }
             }
+        }
+
+        for (key, radius) in new_radii.iter() {
+            self.cell_collection.get_cell_mut(*key).radius = *radius;
+        }
+
+        for (key, velocity) in new_velocities.iter() {
+            self.cell_collection.get_cell_mut(*key).velocity = *velocity;
         }
 
     }
