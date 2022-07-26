@@ -62,8 +62,8 @@ pub fn get_new_player_velocity_after_ejection(
 /// For the purposes of the internal calculations of this struct, the cells are reordered such that the largest is the first one
 ///  in any case, the order of the results are guaranteed to be with respect to the original order, so the user of the struct doesn't need to worry about this detail
 pub struct CollisionCalculator<'a> {
-    cells: [&'a Cell; 2],
-    is_cell_order_reversed_internally: bool,
+    cells: [&'a Cell; 2],                    //The larger/smaller cell, in that order
+    is_cell_order_reversed_internally: bool, //Whether the cell order was reversed in order to make sure the first cell is the larger one
     pub collision_type: CollisionType,
     pub new_radii: [f64; 2],
     pub new_velocities: [Vector2<f64>; 2],
@@ -130,10 +130,24 @@ impl<'a> CollisionCalculator<'a> {
         let position1 = self.cells[1].position;
         let distance = (position0 - position1).norm();
 
-        let root_term =
-            (2.0 * radius0.powf(2.0) + 2.0 * radius1.powf(2.0) - distance.powf(2.0)).sqrt();
-        let new_radius0 = 0.5 * (distance + root_term);
-        let new_radius1 = 0.5 * (distance - root_term);
+        let mut new_radius0 = radius0;
+        let mut new_radius1 = radius1;
+
+        match self.collision_type {
+            CollisionType::FullMerge => {
+                new_radius0 = (radius0.powf(2.0) + radius1.powf(2.0)).sqrt();
+                new_radius1 = 0.0;
+            }
+            CollisionType::PartialMerge => {
+                let root_term =
+                    (2.0 * radius0.powf(2.0) + 2.0 * radius1.powf(2.0) - distance.powf(2.0)).sqrt();
+                new_radius0 = 0.5 * (distance + root_term);
+                new_radius1 = 0.5 * (distance - root_term);
+            }
+            CollisionType::Bounce => {}
+            CollisionType::NoCollision => {}
+        };
+
         [new_radius0, new_radius1]
     }
 
@@ -146,16 +160,33 @@ impl<'a> CollisionCalculator<'a> {
         let velocity1 = self.cells[0].velocity;
         let distance = (position0 - position1).norm();
         let area0 = PI * radius0.powf(2.0);
-        let area_transferred = PI / 2.0
-            * (-radius0.powf(2.0)
-                + radius1.powf(2.0)
-                + distance
-                    * (2.0 * radius0.powf(2.0) + 2.0 * radius1.powf(2.0) - distance.powf(2.0))
-                        .sqrt());
+        let area1 = PI * radius1.powf(2.0);
 
-        let new_velocity0 = area0 / (area0 + area_transferred) * velocity0
-            + area_transferred / (area0 + area_transferred) * velocity1;
-        let new_velocity1 = velocity1;
+        let mut new_velocity0 = Vector2::<f64>::new(0.0, 0.0);
+        let mut new_velocity1 = Vector2::<f64>::new(0.0, 0.0);
+        match self.collision_type {
+            CollisionType::FullMerge => {
+                new_velocity0 =
+                    area0 / (area0 + area1) * velocity0 + area1 / (area0 + area1) * velocity1;
+                new_velocity1 = velocity1;
+            }
+            CollisionType::PartialMerge => {
+                let area_transferred = PI / 2.0
+                    * (-radius0.powf(2.0)
+                        + radius1.powf(2.0)
+                        + distance
+                            * (2.0 * radius0.powf(2.0) + 2.0 * radius1.powf(2.0)
+                                - distance.powf(2.0))
+                            .sqrt());
+                new_velocity0 = area0 / (area0 + area_transferred) * velocity0
+                    + area_transferred / (area0 + area_transferred) * velocity1;
+                new_velocity1 = velocity1;
+            }
+            CollisionType::Bounce => {
+                //TODO
+            }
+            CollisionType::NoCollision => {}
+        };
 
         [new_velocity0, new_velocity1]
     }
