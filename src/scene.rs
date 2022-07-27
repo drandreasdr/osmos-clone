@@ -103,9 +103,11 @@ impl Scene {
         ejection_calculator.calculate(mouse_position);
 
         let new_cell = ejection_calculator.ejected_particle.unwrap();
+        let new_player_radius = ejection_calculator.new_player_radius;
         let new_player_velocity = ejection_calculator.new_player_velocity;
 
         self.cell_collection.add_cell(new_cell);
+        self.get_player_mut().radius = new_player_radius;
         self.get_player_mut().velocity = new_player_velocity;
     }
 

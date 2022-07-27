@@ -121,6 +121,7 @@ impl<'a> WallBounceCalculator<'a> {
 pub struct EjectionCalculator<'a> {
     player: &'a Cell,
     pub ejected_particle: Option<Cell>,
+    pub new_player_radius: f64,
     pub new_player_velocity: Vector2<f64>,
 }
 
@@ -129,12 +130,15 @@ impl<'a> EjectionCalculator<'a> {
         EjectionCalculator {
             player,
             ejected_particle: None,
+            new_player_radius: 0.0,
             new_player_velocity: Vector2::<f64>::new(0.0, 0.0),
         }
     }
 
     pub fn calculate(&mut self, mouse_position: Vector2<f64>) {
         self.ejected_particle = Some(self.create_ejected_particle(mouse_position));
+
+        self.new_player_radius = self.get_new_player_radius_after_ejection();
 
         self.new_player_velocity = self.get_new_player_velocity_after_ejection();
     }
@@ -155,6 +159,10 @@ impl<'a> EjectionCalculator<'a> {
             constants::RADIUS_EJECTED_PARTICLE,
             constants::WHITE,
         )
+    }
+
+    fn get_new_player_radius_after_ejection(&mut self) -> f64 {
+        (self.player.radius.powf(2.0) - constants::RADIUS_EJECTED_PARTICLE.powf(2.0)).sqrt()
     }
 
     fn get_new_player_velocity_after_ejection(&mut self) -> Vector2<f64> {
