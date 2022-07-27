@@ -109,6 +109,10 @@ impl Scene {
         self.cell_collection.add_cell(new_cell);
         self.get_player_mut().radius = new_player_radius;
         self.get_player_mut().velocity = new_player_velocity;
+
+        if new_player_radius == 0.0 {
+            self.keys_to_delete.push(self.player_key);
+        }
     }
 
     fn handle_wall_bounce(&mut self) {

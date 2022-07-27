@@ -162,7 +162,13 @@ impl<'a> EjectionCalculator<'a> {
     }
 
     fn get_new_player_radius_after_ejection(&mut self) -> f64 {
-        (self.player.radius.powf(2.0) - constants::RADIUS_EJECTED_PARTICLE.powf(2.0)).sqrt()
+        let radius_squared =
+            self.player.radius.powf(2.0) - constants::RADIUS_EJECTED_PARTICLE.powf(2.0);
+        if radius_squared <= 0.0 {
+            0.0
+        } else {
+            radius_squared.sqrt()
+        }
     }
 
     fn get_new_player_velocity_after_ejection(&mut self) -> Vector2<f64> {
