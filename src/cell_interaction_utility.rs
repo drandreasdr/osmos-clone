@@ -173,14 +173,11 @@ impl<'a> CollisionCalculator<'a> {
         let area0 = PI * radius0.powf(2.0);
         let area1 = PI * radius1.powf(2.0);
 
-        let mut new_velocity0 = Vector2::<f64>::new(0.0, 0.0);
-        let mut new_velocity1 = Vector2::<f64>::new(0.0, 0.0);
         match self.collision_type {
-            CollisionType::FullMerge => {
-                new_velocity0 =
-                    area0 / (area0 + area1) * velocity0 + area1 / (area0 + area1) * velocity1;
-                new_velocity1 = velocity1;
-            }
+            CollisionType::FullMerge => [
+                area0 / (area0 + area1) * velocity0 + area1 / (area0 + area1) * velocity1,
+                velocity1,
+            ],
             CollisionType::PartialMerge => {
                 let area_transferred = PI / 2.0
                     * (-radius0.powf(2.0)
@@ -189,11 +186,16 @@ impl<'a> CollisionCalculator<'a> {
                             * (2.0 * radius0.powf(2.0) + 2.0 * radius1.powf(2.0)
                                 - distance.powf(2.0))
                             .sqrt());
-                new_velocity0 = area0 / (area0 + area_transferred) * velocity0
-                    + area_transferred / (area0 + area_transferred) * velocity1;
-                new_velocity1 = velocity1;
+                [
+                    area0 / (area0 + area_transferred) * velocity0
+                        + area_transferred / (area0 + area_transferred) * velocity1,
+                    velocity1,
+                ]
             }
             CollisionType::Bounce => {
+                if velocity0.dot(&velocity1) > 0.0 {
+                    return [velocity0, velocity1];
+                }
                 let r_0_to_1 = position1 - position0;
                 let e_perp = r_0_to_1 / r_0_to_1.norm(); //perpendicular
                 let e_para = Vector2::<f64>::new(e_perp[1], -e_perp[0]); //parallel
@@ -202,13 +204,13 @@ impl<'a> CollisionCalculator<'a> {
                 let new_velocity0_para = velocity0.dot(&e_para);
                 let new_velocity1_para = velocity1.dot(&e_para);
 
-                new_velocity0 = new_velocity0_perp * e_perp + new_velocity0_para * e_para;
-                new_velocity1 = new_velocity1_perp * e_perp + new_velocity1_para * e_para;
+                [
+                    new_velocity0_perp * e_perp + new_velocity0_para * e_para,
+                    new_velocity1_perp * e_perp + new_velocity1_para * e_para,
+                ]
             }
-            CollisionType::NoCollision => {}
-        };
-
-        [new_velocity0, new_velocity1]
+            CollisionType::NoCollision => [velocity0, velocity1],
+        }
     }
     pub fn get_should_delete_cell_after_collision(&self) -> [bool; 2] {
         let mut result = [false, false];
