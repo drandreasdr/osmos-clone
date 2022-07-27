@@ -110,14 +110,28 @@ impl Scene {
     }
 
     fn handle_wall_bounce(&mut self) {
-        for cell in self.cell_collection.get_cells_mut() {
-            let velocity_factors = cell_interaction_utility::get_velocity_factors_for_wall_bounce(
-                cell.position,
-                cell.radius,
-                self.window_size,
-            );
-            cell.velocity[0] *= velocity_factors[0];
-            cell.velocity[1] *= velocity_factors[1];
+        let mut new_positions = HashMap::new();
+        let mut new_velocities = HashMap::new();
+        for key in self.cell_collection.get_keys() {
+            let cell = self.cell_collection.get_cell(*key);
+            let mut wall_bounce_calculator =
+                cell_interaction_utility::WallBounceCalculator::new(&cell, self.window_size);
+            wall_bounce_calculator.calculate();
+
+            if let Some(p) = wall_bounce_calculator.new_position {
+                new_positions.insert(*key, p);
+            }
+            if let Some(v) = wall_bounce_calculator.new_velocity {
+                new_velocities.insert(*key, v);
+            }
+        }
+
+        for (key, position) in new_positions.iter() {
+            self.cell_collection.get_cell_mut(*key).position = *position;
+        }
+
+        for (key, velocity) in new_velocities.iter() {
+            self.cell_collection.get_cell_mut(*key).velocity = *velocity;
         }
     }
 
@@ -131,7 +145,7 @@ impl Scene {
             let cell1 = self.cell_collection.get_cell(key1);
 
             let mut collision_calculator =
-                cell_interaction_utility::CollisionCalculator::new([cell0, cell1]);
+                cell_interaction_utility::CollisionCalculator::new([cell0, cell1], [key0, key1]);
             collision_calculator.calculate();
             if collision_calculator.collision_type == CollisionType::NoCollision {
                 continue;
