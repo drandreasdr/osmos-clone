@@ -2,7 +2,9 @@ use super::constants;
 use super::constants::CollisionType;
 use super::constants::Direction;
 use super::entities::Cell;
+use super::entities::CellCollection;
 use nalgebra::Vector2;
+use std::collections::hash_map::HashMap;
 use std::f64::consts::PI;
 
 pub fn get_index_of_dominant_cell(cells: [&Cell; 2], cell_indices: [i32; 2]) -> i32 {
@@ -331,4 +333,32 @@ impl<'a> CollisionCalculator<'a> {
 
         result
     }
+}
+
+pub fn calculate_cell_colors(
+    cell_collection: &CellCollection,
+    player_index: i32,
+) -> HashMap<i32, constants::Color> {
+    let mut result = HashMap::new();
+    result.insert(player_index, constants::COLOR_OF_PLAYER);
+
+    let player_cell = cell_collection.get_cell(player_index);
+    for index in cell_collection.get_indices() {
+        if *index == player_index {
+            continue;
+        }
+        let cell = cell_collection.get_cell(*index);
+        let does_player_dominate =
+            get_index_of_dominant_cell([&player_cell, &cell], [player_index, *index]) == 0;
+
+        let color = if does_player_dominate {
+            constants::COLOR_OF_CELL_DOMINATED_BY_PLAYER
+        } else {
+            constants::COLOR_OF_CELL_DOMINATING_PLAYER
+        };
+
+        result.insert(*index, color);
+    }
+
+    result
 }

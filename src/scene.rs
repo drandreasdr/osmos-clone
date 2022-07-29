@@ -85,6 +85,8 @@ impl Scene {
 
         self.handle_wall_bounce();
 
+        self.update_colors();
+
         //self.check_win_loss_condition();
 
         self.handle_object_deletion();
@@ -181,6 +183,15 @@ impl Scene {
         for (index, velocity) in new_velocities.iter() {
             self.cell_collection.get_cell_mut(*index).velocity = *velocity;
         }
+    }
+
+    fn update_colors(&mut self) {
+        let new_colors = cell_interaction_utility::calculate_cell_colors(&self.cell_collection, self.player_index);
+        
+        for (index, color) in new_colors.iter() {
+            self.cell_collection.get_cell_mut(*index).color = *color;
+        }
+
     }
 
     fn handle_object_deletion(&mut self) {
