@@ -66,8 +66,14 @@ impl Scene {
     }
 
     pub fn update(&mut self, dt: f64, input_handler: &input_handler::InputHandler) {
+        //Explanation for the order of function calls:
+        // Advance the time step and handle ejection before handling cell collisions, since the latter resolves overlaps between cells
+        // Handle cell collisions before wall bounce, since the latter corrects the position of cells that end up out of bounds
+
         self.direction_marker.position =
             self.get_direction_marker_position(input_handler.mouse_position);
+
+        physics::integrate(self, dt);
 
         for input_action in input_handler.input_actions.iter() {
             if let input_handler::InputAction::LeftMouseClick(mouse_coordinates) = input_action {
@@ -75,13 +81,13 @@ impl Scene {
             }
         }
 
-        self.handle_wall_bounce();
-
         self.handle_cell_collisions();
 
-        self.handle_object_deletion();
+        self.handle_wall_bounce();
 
-        physics::integrate(self, dt);
+        //self.check_win_loss_condition();
+
+        self.handle_object_deletion();
     }
 
     pub fn render(&self, transform: graphics::math::Matrix2d, graphics: &mut G2d) {
