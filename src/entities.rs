@@ -47,47 +47,47 @@ impl Cell {
 }
 
 pub struct CellCollection {
-    cells: HashMap<i32, Cell>,
-    largest_key: i32,
+    cells: HashMap<i32, Cell>, //The key is an index that is guaranteed to increase with creation order - higher index for newer cells
+    largest_index: i32,
 }
 
 impl CellCollection {
     pub fn new() -> CellCollection {
         CellCollection {
             cells: HashMap::new(),
-            largest_key: 0,
+            largest_index: 0,
         }
     }
 
-    fn generate_key(&mut self) -> i32 {
-        self.largest_key += 1;
-        self.largest_key
+    fn generate_index(&mut self) -> i32 {
+        self.largest_index += 1;
+        self.largest_index
     }
 
     pub fn add_cell(&mut self, cell: Cell) -> i32 {
-        let key = self.generate_key();
-        self.cells.insert(key, cell);
-        key
+        let index = self.generate_index();
+        self.cells.insert(index, cell);
+        index
     }
 
-    pub fn delete_cell(&mut self, key: &i32) {
-        self.cells.remove(&key);
+    pub fn delete_cell(&mut self, index: &i32) {
+        self.cells.remove(&index);
     }
 
-    pub fn get_keys(&self) -> Keys<i32, Cell> {
+    pub fn get_indices(&self) -> Keys<i32, Cell> {
         self.cells.keys()
     }
 
-    pub fn get_cell_mut(&mut self, key: i32) -> &mut Cell {
-        self.cells.get_mut(&key).unwrap()
+    pub fn get_cell_mut(&mut self, index: i32) -> &mut Cell {
+        self.cells.get_mut(&index).unwrap()
     }
 
     pub fn get_cells_mut(&mut self) -> ValuesMut<i32, Cell> {
         self.cells.values_mut()
     }
 
-    pub fn get_cell(&self, key: i32) -> &Cell {
-        self.cells.get(&key).unwrap()
+    pub fn get_cell(&self, index: i32) -> &Cell {
+        self.cells.get(&index).unwrap()
     }
 
     pub fn get_cells(&self) -> Values<i32, Cell> {

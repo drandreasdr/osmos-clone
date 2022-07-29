@@ -16,15 +16,15 @@ pub struct Scene {
     pub window_size: (f64, f64),
     pub cell_collection: CellCollection,
     pub direction_marker: DirectionMarker,
-    player_key: i32,
-    keys_to_delete: Vec<i32>, //keys to delete at the end of the update
+    player_index: i32,
+    indices_to_delete: Vec<i32>, //indices of cells to delete at the end of the update
 }
 
 impl Scene {
     pub fn new(window_size: (f64, f64)) -> Self {
         let mut cell_collection = CellCollection::new();
 
-        let player_key = cell_collection.add_cell(Cell::new(
+        let player_index = cell_collection.add_cell(Cell::new(
             Vector2::<f64>::new(300.0, 300.0),
             Vector2::<f64>::new(0.0, 0.0),
             50.0,
@@ -41,28 +41,28 @@ impl Scene {
             Vector2::<f64>::new(240.0, 240.0),
             Vector2::<f64>::new(1.0, 0.0),
             20.0,
-            constants::BLUE,
+            constants::GREEN,
         ));
 
         let direction_marker = DirectionMarker::new(10.0);
 
-        let keys_to_delete = Vec::new();
+        let indices_to_delete = Vec::new();
 
         Scene {
             window_size,
             cell_collection,
             direction_marker,
-            player_key,
-            keys_to_delete,
+            player_index,
+            indices_to_delete,
         }
     }
 
     pub fn get_player(&self) -> &Cell {
-        return self.cell_collection.get_cell(self.player_key);
+        return self.cell_collection.get_cell(self.player_index);
     }
 
     pub fn get_player_mut(&mut self) -> &mut Cell {
-        return self.cell_collection.get_cell_mut(self.player_key);
+        return self.cell_collection.get_cell_mut(self.player_index);
     }
 
     pub fn update(&mut self, dt: f64, input_handler: &input_handler::InputHandler) {
@@ -117,80 +117,80 @@ impl Scene {
         self.get_player_mut().velocity = new_player_velocity;
 
         if new_player_radius == 0.0 {
-            self.keys_to_delete.push(self.player_key);
+            self.indices_to_delete.push(self.player_index);
         }
     }
 
     fn handle_wall_bounce(&mut self) {
         let mut new_positions = HashMap::new();
         let mut new_velocities = HashMap::new();
-        for key in self.cell_collection.get_keys() {
-            let cell = self.cell_collection.get_cell(*key);
+        for index in self.cell_collection.get_indices() {
+            let cell = self.cell_collection.get_cell(*index);
             let mut wall_bounce_calculator =
                 cell_interaction_utility::WallBounceCalculator::new(&cell, self.window_size);
             wall_bounce_calculator.calculate();
 
             if let Some(p) = wall_bounce_calculator.new_position {
-                new_positions.insert(*key, p);
+                new_positions.insert(*index, p);
             }
             if let Some(v) = wall_bounce_calculator.new_velocity {
-                new_velocities.insert(*key, v);
+                new_velocities.insert(*index, v);
             }
         }
 
-        for (key, position) in new_positions.iter() {
-            self.cell_collection.get_cell_mut(*key).position = *position;
+        for (index, position) in new_positions.iter() {
+            self.cell_collection.get_cell_mut(*index).position = *position;
         }
 
-        for (key, velocity) in new_velocities.iter() {
-            self.cell_collection.get_cell_mut(*key).velocity = *velocity;
+        for (index, velocity) in new_velocities.iter() {
+            self.cell_collection.get_cell_mut(*index).velocity = *velocity;
         }
     }
 
     fn handle_cell_collisions(&mut self) {
         let mut new_radii = HashMap::new();
         let mut new_velocities = HashMap::new();
-        for pair in self.cell_collection.get_keys().combinations(2) {
-            let key0 = *pair[0];
-            let key1 = *pair[1];
-            let cell0 = self.cell_collection.get_cell(key0);
-            let cell1 = self.cell_collection.get_cell(key1);
+        for pair in self.cell_collection.get_indices().combinations(2) {
+            let index0 = *pair[0];
+            let index1 = *pair[1];
+            let cell0 = self.cell_collection.get_cell(index0);
+            let cell1 = self.cell_collection.get_cell(index1);
 
             let mut collision_calculator =
-                cell_interaction_utility::CollisionCalculator::new([cell0, cell1], [key0, key1]);
+                cell_interaction_utility::CollisionCalculator::new([cell0, cell1], [index0, index1]);
             collision_calculator.calculate();
             if collision_calculator.collision_type == CollisionType::NoCollision {
                 continue;
             }
 
             for i in 0..2 {
-                let key_i = *pair[i];
+                let index_i = *pair[i];
                 if collision_calculator.should_delete_cell[i] {
-                    self.keys_to_delete.push(key_i);
+                    self.indices_to_delete.push(index_i);
                 } else {
-                    new_radii.insert(key_i, collision_calculator.new_radii[i]);
-                    new_velocities.insert(key_i, collision_calculator.new_velocities[i]);
+                    new_radii.insert(index_i, collision_calculator.new_radii[i]);
+                    new_velocities.insert(index_i, collision_calculator.new_velocities[i]);
                 }
             }
         }
 
-        for (key, radius) in new_radii.iter() {
-            self.cell_collection.get_cell_mut(*key).radius = *radius;
+        for (index, radius) in new_radii.iter() {
+            self.cell_collection.get_cell_mut(*index).radius = *radius;
         }
 
-        for (key, velocity) in new_velocities.iter() {
-            self.cell_collection.get_cell_mut(*key).velocity = *velocity;
+        for (index, velocity) in new_velocities.iter() {
+            self.cell_collection.get_cell_mut(*index).velocity = *velocity;
         }
     }
 
     fn handle_object_deletion(&mut self) {
-        if self.keys_to_delete.contains(&self.player_key) {
+        if self.indices_to_delete.contains(&self.player_index) {
             panic!("PLAYER DELETED!");
         }
 
-        for key in self.keys_to_delete.iter() {
-            self.cell_collection.delete_cell(key);
+        for index in self.indices_to_delete.iter() {
+            self.cell_collection.delete_cell(index);
         }
-        self.keys_to_delete.clear();
+        self.indices_to_delete.clear();
     }
 }

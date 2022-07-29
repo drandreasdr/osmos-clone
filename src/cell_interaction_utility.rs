@@ -5,6 +5,22 @@ use super::entities::Cell;
 use nalgebra::Vector2;
 use std::f64::consts::PI;
 
+pub fn get_index_of_dominant_cell(cells: [&Cell; 2], cell_indices: [i32; 2]) -> i32 {
+    //Larger cells dominate smaller. If equal in sizen, older cells dominate newer.
+    if cells[0].radius > cells[1].radius {
+        return 0;
+    } else if cells[1].radius > cells[0].radius {
+        return 1;
+    } else {
+        //Note: cells are equal in size
+        if cell_indices[0] < cell_indices[1] {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+}
+
 pub struct WallBounceCalculator<'a> {
     cell: &'a Cell,
     window_size: (f64, f64),
@@ -183,7 +199,7 @@ impl<'a> EjectionCalculator<'a> {
 }
 
 /// Calculates parameters revelant to the collision between two cells. Meant to be a short-lived utility struct.
-/// The rule is that the larger cell dominates (consumes) the smaller. If they are equal in size, then the older cell consumes the newer.
+/// The rule is that the dominant cell consumes the other.
 /// Internally in this struct, the cells are reordered such that the dominant one is the first one,
 ///  but the order of the output is guaranteed to be with respect to the original cell order,
 ///  so the user of the struct can consume the output without caring about this detail
@@ -197,14 +213,10 @@ pub struct CollisionCalculator<'a> {
 }
 
 impl<'a> CollisionCalculator<'a> {
-    pub fn new(cells_in: [&'a Cell; 2], cell_keys: [i32; 2]) -> Self {
+    pub fn new(cells_in: [&'a Cell; 2], cell_indices: [i32; 2]) -> Self {
         let mut cells = cells_in;
-        let mut is_cell_order_reversed_internally = false;
-        if cells[0].radius < cells[1].radius {
-            is_cell_order_reversed_internally = true;
-        } else if cells[0].radius == cells[1].radius && cell_keys[0] > cell_keys[1] {
-            is_cell_order_reversed_internally = true;
-        }
+        let is_cell_order_reversed_internally =
+            get_index_of_dominant_cell(cells_in, cell_indices) == 1;
         if is_cell_order_reversed_internally {
             cells.reverse();
         }
