@@ -17,17 +17,12 @@ pub struct Cell {
 }
 
 impl Cell {
-    pub fn new(
-        position: Vector2<f64>,
-        velocity: Vector2<f64>,
-        radius: f64,
-        color: constants::Color,
-    ) -> Self {
+    pub fn new(position: Vector2<f64>, velocity: Vector2<f64>, radius: f64) -> Self {
         Cell {
             position,
             velocity,
             radius,
-            color,
+            color: constants::WHITE,
         }
     }
 
@@ -122,20 +117,17 @@ impl CellCollectionFactory {
             Vector2::<f64>::new(300.0, 300.0),
             Vector2::<f64>::new(0.0, 0.0),
             50.0,
-            constants::RED,
         ));
 
         cell_collection.add_cell(Cell::new(
             Vector2::<f64>::new(50.0, 50.0),
             Vector2::<f64>::new(0.0, 0.0),
             20.0,
-            constants::YELLOW,
         ));
         cell_collection.add_cell(Cell::new(
             Vector2::<f64>::new(240.0, 240.0),
             Vector2::<f64>::new(1.0, 0.0),
             20.0,
-            constants::GREEN,
         ));
 
         self.cell_collection = Some(cell_collection);

@@ -175,7 +175,6 @@ impl<'a> EjectionCalculator<'a> {
             ejected_particle_position,
             ejected_particle_velocity,
             constants::RADIUS_EJECTED_PARTICLE,
-            constants::WHITE,
         )
     }
 
