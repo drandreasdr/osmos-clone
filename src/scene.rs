@@ -1,5 +1,4 @@
 use super::cell_interaction_utility;
-use super::constants;
 use super::constants::CollisionType;
 use super::entities::*;
 use super::input_handler;
@@ -21,29 +20,11 @@ pub struct Scene {
 }
 
 impl Scene {
-    pub fn new(window_size: (f64, f64)) -> Self {
-        let mut cell_collection = CellCollection::new();
-
-        let player_index = cell_collection.add_cell(Cell::new(
-            Vector2::<f64>::new(300.0, 300.0),
-            Vector2::<f64>::new(0.0, 0.0),
-            50.0,
-            constants::RED,
-        ));
-
-        cell_collection.add_cell(Cell::new(
-            Vector2::<f64>::new(50.0, 50.0),
-            Vector2::<f64>::new(0.0, 0.0),
-            20.0,
-            constants::YELLOW,
-        ));
-        cell_collection.add_cell(Cell::new(
-            Vector2::<f64>::new(240.0, 240.0),
-            Vector2::<f64>::new(1.0, 0.0),
-            20.0,
-            constants::GREEN,
-        ));
-
+    pub fn new(
+        window_size: (f64, f64),
+        cell_collection: CellCollection,
+        player_index: i32,
+    ) -> Self {
         let direction_marker = DirectionMarker::new(10.0);
 
         let indices_to_delete = Vec::new();
@@ -158,8 +139,10 @@ impl Scene {
             let cell0 = self.cell_collection.get_cell(index0);
             let cell1 = self.cell_collection.get_cell(index1);
 
-            let mut collision_calculator =
-                cell_interaction_utility::CollisionCalculator::new([cell0, cell1], [index0, index1]);
+            let mut collision_calculator = cell_interaction_utility::CollisionCalculator::new(
+                [cell0, cell1],
+                [index0, index1],
+            );
             collision_calculator.calculate();
             if collision_calculator.collision_type == CollisionType::NoCollision {
                 continue;
@@ -186,12 +169,13 @@ impl Scene {
     }
 
     fn update_colors(&mut self) {
-        let new_colors = cell_interaction_utility::calculate_cell_colors(&self.cell_collection, self.player_index);
-        
+        let new_colors = cell_interaction_utility::calculate_cell_colors(
+            &self.cell_collection,
+            self.player_index,
+        );
         for (index, color) in new_colors.iter() {
             self.cell_collection.get_cell_mut(*index).color = *color;
         }
-
     }
 
     fn handle_object_deletion(&mut self) {

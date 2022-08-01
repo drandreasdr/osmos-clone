@@ -3,6 +3,7 @@ extern crate opengl_graphics;
 extern crate piston_window;
 
 use super::constants;
+use super::entities;
 use super::input_handler;
 use super::scene;
 use piston_window::*;
@@ -16,7 +17,14 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Self {
-        let scene = scene::Scene::new((WINDOW_SIZE as f64, WINDOW_SIZE as f64));
+        let mut cell_collection_factory = entities::CellCollectionFactory::new();
+        cell_collection_factory.generate();
+
+        let scene = scene::Scene::new(
+            (WINDOW_SIZE as f64, WINDOW_SIZE as f64),
+            cell_collection_factory.cell_collection.unwrap(),
+            cell_collection_factory.player_index.unwrap(),
+        );
         let input_handler = input_handler::InputHandler::new();
         Game {
             scene,

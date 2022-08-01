@@ -102,6 +102,47 @@ pub struct DirectionMarker {
     pub color: constants::Color,
 }
 
+pub struct CellCollectionFactory {
+    pub cell_collection: Option<CellCollection>,
+    pub player_index: Option<i32>,
+}
+
+impl CellCollectionFactory {
+    pub fn new() -> Self {
+        CellCollectionFactory {
+            cell_collection: None,
+            player_index: None,
+        }
+    }
+
+    pub fn generate(&mut self) {
+        let mut cell_collection = CellCollection::new();
+
+        let player_index = cell_collection.add_cell(Cell::new(
+            Vector2::<f64>::new(300.0, 300.0),
+            Vector2::<f64>::new(0.0, 0.0),
+            50.0,
+            constants::RED,
+        ));
+
+        cell_collection.add_cell(Cell::new(
+            Vector2::<f64>::new(50.0, 50.0),
+            Vector2::<f64>::new(0.0, 0.0),
+            20.0,
+            constants::YELLOW,
+        ));
+        cell_collection.add_cell(Cell::new(
+            Vector2::<f64>::new(240.0, 240.0),
+            Vector2::<f64>::new(1.0, 0.0),
+            20.0,
+            constants::GREEN,
+        ));
+
+        self.cell_collection = Some(cell_collection);
+        self.player_index = Some(player_index);
+    }
+}
+
 impl DirectionMarker {
     pub fn new(length: f64) -> Self {
         DirectionMarker {
