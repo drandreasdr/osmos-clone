@@ -17,11 +17,12 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Self {
-        let mut cell_collection_factory = entities::CellCollectionFactory::new();
+        let window_size = (WINDOW_SIZE as f64, WINDOW_SIZE as f64);
+        let mut cell_collection_factory = entities::CellCollectionFactory::new(window_size);
         cell_collection_factory.generate();
 
         let scene = scene::Scene::new(
-            (WINDOW_SIZE as f64, WINDOW_SIZE as f64),
+            window_size,
             cell_collection_factory.cell_collection.unwrap(),
             cell_collection_factory.player_index.unwrap(),
         );

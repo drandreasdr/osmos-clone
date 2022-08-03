@@ -3,10 +3,12 @@ use nalgebra::Vector2;
 extern crate graphics;
 extern crate opengl_graphics;
 use piston_window::*;
+use rand::prelude::*;
 use std::collections::hash_map::HashMap;
 use std::collections::hash_map::Keys;
 use std::collections::hash_map::Values;
 use std::collections::hash_map::ValuesMut;
+use std::f64::consts::PI;
 
 #[derive(Debug)]
 pub struct Cell {
@@ -98,21 +100,23 @@ pub struct DirectionMarker {
 }
 
 pub struct CellCollectionFactory {
+    window_size: (f64, f64),
     pub cell_collection: Option<CellCollection>,
     pub player_index: Option<i32>,
 }
 
 impl CellCollectionFactory {
-    pub fn new() -> Self {
+    pub fn new(window_size: (f64, f64)) -> Self {
         CellCollectionFactory {
+            window_size,
             cell_collection: None,
             player_index: None,
         }
     }
 
     pub fn generate(&mut self) {
-        self.generate_custom();
-        //self.generate_parametric();
+        //self.generate_custom();
+        self.generate_parametric();
     }
     pub fn generate_custom(&mut self) {
         let mut cell_collection = CellCollection::new();
@@ -139,6 +143,9 @@ impl CellCollectionFactory {
     }
 
     pub fn generate_parametric(&mut self) {
+        let mut rng = rand::thread_rng();
+        let mut cell_collection = CellCollection::new();
+
         let radius_limits = [20.0, 200.0];
         let player_relative_radius = 0.5;
         let speed_limits = [5.0, 20.0];
@@ -147,7 +154,43 @@ impl CellCollectionFactory {
         let player_radius =
             radius_limits[0] + player_relative_radius * (radius_limits[1] - radius_limits[0]);
 
-        //Create player
+        let player_index = cell_collection.add_cell(Cell::new(
+            self.get_random_position_within_scene(player_radius, &mut rng),
+            Vector2::<f64>::new(0.0, 0.0),
+            50.0,
+        ));
+
+        cell_collection.add_cell(Cell::new(
+            Vector2::<f64>::new(50.0, 50.0),
+            Vector2::<f64>::new(0.0, 0.0),
+            20.0,
+        ));
+        cell_collection.add_cell(Cell::new(
+            Vector2::<f64>::new(240.0, 240.0),
+            Vector2::<f64>::new(1.0, 0.0),
+            20.0,
+        ));
+
+        self.cell_collection = Some(cell_collection);
+        self.player_index = Some(player_index);
+    }
+
+    fn get_random_position_within_scene(&self, radius: f64, rng: &mut ThreadRng) -> Vector2<f64> {
+        let width = self.window_size.0 - 2.0 * radius;
+        let height = self.window_size.1 - 2.0 * radius;
+        let x_rand: f64 = rng.gen();
+        let y_rand: f64 = rng.gen();
+        let x = radius + x_rand * width;
+        let y = radius + y_rand * height;
+        Vector2::<f64>::new(x, y)
+    }
+
+    fn get_random_velocity(&self, magnitude: f64, rng: &mut ThreadRng) -> Vector2<f64> {
+        let angle_rand: f64 = rng.gen();
+        let angle = angle_rand * 2.0 * PI;
+        let x = angle.cos() * magnitude;
+        let y = angle.sin() * magnitude;
+        Vector2::<f64>::new(x, y)
     }
 }
 
