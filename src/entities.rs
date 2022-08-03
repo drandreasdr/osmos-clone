@@ -154,6 +154,8 @@ impl CellCollectionFactory {
         let player_radius =
             radius_limits[0] + player_relative_radius * (radius_limits[1] - radius_limits[0]);
 
+        println!("{}", player_radius);
+
         let player_index = cell_collection.add_cell(Cell::new(
             self.get_random_position_within_scene(player_radius, &mut rng),
             Vector2::<f64>::new(0.0, 0.0),
@@ -166,13 +168,14 @@ impl CellCollectionFactory {
         while total_cell_area / total_scene_area < target_fill_ratio {
             let radius: f64 = rng.gen_range(radius_limits[0]..radius_limits[1]);
             let speed: f64 = rng.gen_range(speed_limits[0]..speed_limits[1]);
-            let cell_index = cell_collection.add_cell(Cell::new(
+            println!("{}", radius);
+            cell_collection.add_cell(Cell::new(
                 self.get_random_position_within_scene(radius, &mut rng),
                 self.get_random_velocity(speed, &mut rng),
-                20.0,
+                radius,
             ));
 
-            total_cell_area += cell_collection.get_cell(cell_index).radius.powf(2.0) * PI;
+            total_cell_area += radius.powf(2.0) * PI;
         }
 
         self.cell_collection = Some(cell_collection);
