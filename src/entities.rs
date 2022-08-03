@@ -147,14 +147,12 @@ impl CellCollectionFactory {
         let mut cell_collection = CellCollection::new();
 
         let radius_limits = [20.0, 60.0];
-        let player_relative_radius = 0.5;
+        let player_relative_radius = 0.8;
         let speed_limits = [5.0, 20.0];
-        let target_fill_ratio = 0.1;
+        let target_fill_ratio = 0.2;
 
         let player_radius =
             radius_limits[0] + player_relative_radius * (radius_limits[1] - radius_limits[0]);
-
-        println!("{}", player_radius);
 
         let player_index = cell_collection.add_cell(Cell::new(
             self.get_random_position_within_scene(player_radius, &mut rng),
@@ -168,7 +166,6 @@ impl CellCollectionFactory {
         while total_cell_area / total_scene_area < target_fill_ratio {
             let radius: f64 = rng.gen_range(radius_limits[0]..radius_limits[1]);
             let speed: f64 = rng.gen_range(speed_limits[0]..speed_limits[1]);
-            println!("{}", radius);
             cell_collection.add_cell(Cell::new(
                 self.get_random_position_within_scene(radius, &mut rng),
                 self.get_random_velocity(speed, &mut rng),
