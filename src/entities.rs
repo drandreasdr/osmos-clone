@@ -146,7 +146,7 @@ impl CellCollectionFactory {
         let mut rng = rand::thread_rng();
         let mut cell_collection = CellCollection::new();
 
-        let radius_limits = [20.0, 60.0];
+        let radius_limits = [10.0, 30.0];
         let player_relative_radius = 0.8;
         let speed_limits = [5.0, 20.0];
         let target_fill_ratio = 0.2;
@@ -155,7 +155,7 @@ impl CellCollectionFactory {
             radius_limits[0] + player_relative_radius * (radius_limits[1] - radius_limits[0]);
 
         let player_index = cell_collection.add_cell(Cell::new(
-            self.get_random_position_within_scene(player_radius, &mut rng),
+            self.get_random_non_overlapping_position(player_radius, &mut rng, &cell_collection),
             Vector2::<f64>::new(0.0, 0.0),
             player_radius,
         ));
@@ -167,7 +167,7 @@ impl CellCollectionFactory {
             let radius: f64 = rng.gen_range(radius_limits[0]..radius_limits[1]);
             let speed: f64 = rng.gen_range(speed_limits[0]..speed_limits[1]);
             cell_collection.add_cell(Cell::new(
-                self.get_random_position_within_scene(radius, &mut rng),
+                self.get_random_non_overlapping_position(radius, &mut rng, &cell_collection),
                 self.get_random_velocity(speed, &mut rng),
                 radius,
             ));
@@ -179,7 +179,35 @@ impl CellCollectionFactory {
         self.player_index = Some(player_index);
     }
 
-    fn get_random_position_within_scene(&self, radius: f64, rng: &mut ThreadRng) -> Vector2<f64> {
+    fn get_random_non_overlapping_position(
+        &self,
+        radius: f64,
+        rng: &mut ThreadRng,
+        cell_collection: &CellCollection,
+    ) -> Vector2<f64> {
+        let overlaps_any_other_cell = |cell_collection: &CellCollection,
+                                       radius: f64,
+                                       candidate_position_of_new_cell: Vector2<f64>|
+         -> bool {
+            for cell in cell_collection.get_cells() {
+                let radius_current = cell.radius;
+                let distance = (cell.position - candidate_position_of_new_cell).norm();
+                if distance <= radius + radius_current {
+                    return true;
+                }
+            }
+            false
+        };
+
+        loop {
+            let candidate_position = self.get_random_position(radius, rng);
+            if !overlaps_any_other_cell(cell_collection, radius, candidate_position) {
+                return candidate_position;
+            }
+        }
+    }
+
+    fn get_random_position(&self, radius: f64, rng: &mut ThreadRng) -> Vector2<f64> {
         let width = self.window_size.0 - 2.0 * radius;
         let height = self.window_size.1 - 2.0 * radius;
         let x: f64 = rng.gen_range(radius..radius + width);
