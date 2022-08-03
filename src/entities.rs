@@ -146,9 +146,9 @@ impl CellCollectionFactory {
         let mut rng = rand::thread_rng();
         let mut cell_collection = CellCollection::new();
 
-        let radius_limits = [10.0, 30.0];
-        let player_relative_radius = 0.8;
-        let speed_limits = [5.0, 20.0];
+        let radius_limits = [10.0, 50.0];
+        let player_relative_radius = 0.9;
+        let speed_limits = [2.0, 5.0];
         let target_fill_ratio = 0.2;
 
         let player_radius =

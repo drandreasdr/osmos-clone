@@ -3,12 +3,11 @@ extern crate opengl_graphics;
 extern crate piston_window;
 
 use super::constants;
+use super::constants::WINDOW_SIZE;
 use super::entities;
 use super::input_handler;
 use super::scene;
 use piston_window::*;
-
-const WINDOW_SIZE: u32 = 512;
 
 pub struct Game {
     scene: scene::Scene,
