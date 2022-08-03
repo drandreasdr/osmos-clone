@@ -111,6 +111,10 @@ impl CellCollectionFactory {
     }
 
     pub fn generate(&mut self) {
+        self.generate_custom();
+        //self.generate_parametric();
+    }
+    pub fn generate_custom(&mut self) {
         let mut cell_collection = CellCollection::new();
 
         let player_index = cell_collection.add_cell(Cell::new(
@@ -132,6 +136,18 @@ impl CellCollectionFactory {
 
         self.cell_collection = Some(cell_collection);
         self.player_index = Some(player_index);
+    }
+
+    pub fn generate_parametric(&mut self) {
+        let radius_limits = [20.0, 200.0];
+        let player_relative_radius = 0.5;
+        let speed_limits = [5.0, 20.0];
+        let target_fill_ratio = 0.1;
+
+        let player_radius =
+            radius_limits[0] + player_relative_radius * (radius_limits[1] - radius_limits[0]);
+
+        //Create player
     }
 }
 

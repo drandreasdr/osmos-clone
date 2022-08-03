@@ -1,4 +1,4 @@
-use super::cell_interaction_utility;
+use super::cell_interactions;
 use super::constants::CollisionType;
 use super::entities::*;
 use super::input_handler;
@@ -87,8 +87,7 @@ impl Scene {
     }
 
     fn handle_ejection(&mut self, mouse_position: Vector2<f64>) {
-        let mut ejection_calculator =
-            cell_interaction_utility::EjectionCalculator::new(self.get_player());
+        let mut ejection_calculator = cell_interactions::EjectionCalculator::new(self.get_player());
         ejection_calculator.calculate(mouse_position);
 
         let new_cell = ejection_calculator.ejected_particle.unwrap();
@@ -110,7 +109,7 @@ impl Scene {
         for index in self.cell_collection.get_indices() {
             let cell = self.cell_collection.get_cell(*index);
             let mut wall_bounce_calculator =
-                cell_interaction_utility::WallBounceCalculator::new(&cell, self.window_size);
+                cell_interactions::WallBounceCalculator::new(&cell, self.window_size);
             wall_bounce_calculator.calculate();
 
             if let Some(p) = wall_bounce_calculator.new_position {
@@ -139,10 +138,8 @@ impl Scene {
             let cell0 = self.cell_collection.get_cell(index0);
             let cell1 = self.cell_collection.get_cell(index1);
 
-            let mut collision_calculator = cell_interaction_utility::CollisionCalculator::new(
-                [cell0, cell1],
-                [index0, index1],
-            );
+            let mut collision_calculator =
+                cell_interactions::CollisionCalculator::new([cell0, cell1], [index0, index1]);
             collision_calculator.calculate();
             if collision_calculator.collision_type == CollisionType::NoCollision {
                 continue;
@@ -169,10 +166,8 @@ impl Scene {
     }
 
     fn update_colors(&mut self) {
-        let new_colors = cell_interaction_utility::calculate_cell_colors(
-            &self.cell_collection,
-            self.player_index,
-        );
+        let new_colors =
+            cell_interactions::calculate_cell_colors(&self.cell_collection, self.player_index);
         for (index, color) in new_colors.iter() {
             self.cell_collection.get_cell_mut(*index).color = *color;
         }

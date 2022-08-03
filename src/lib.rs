@@ -1,4 +1,4 @@
-pub mod cell_interaction_utility;
+pub mod cell_interactions;
 pub mod constants;
 pub mod entities;
 pub mod game;

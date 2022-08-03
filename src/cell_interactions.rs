@@ -170,7 +170,6 @@ impl<'a> EjectionCalculator<'a> {
         let ejected_particle_velocity = constants::RELATIVE_VELOCITY_MAGNITUDE_EJECTED_PARTICLE
             * aim_direction
             + self.player.velocity;
-
         Cell::new(
             ejected_particle_position,
             ejected_particle_velocity,
