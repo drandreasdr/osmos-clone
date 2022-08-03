@@ -146,7 +146,7 @@ impl CellCollectionFactory {
         let mut rng = rand::thread_rng();
         let mut cell_collection = CellCollection::new();
 
-        let radius_limits = [20.0, 200.0];
+        let radius_limits = [20.0, 60.0];
         let player_relative_radius = 0.5;
         let speed_limits = [5.0, 20.0];
         let target_fill_ratio = 0.1;
@@ -157,19 +157,23 @@ impl CellCollectionFactory {
         let player_index = cell_collection.add_cell(Cell::new(
             self.get_random_position_within_scene(player_radius, &mut rng),
             Vector2::<f64>::new(0.0, 0.0),
-            50.0,
+            player_radius,
         ));
 
-        cell_collection.add_cell(Cell::new(
-            Vector2::<f64>::new(50.0, 50.0),
-            Vector2::<f64>::new(0.0, 0.0),
-            20.0,
-        ));
-        cell_collection.add_cell(Cell::new(
-            Vector2::<f64>::new(240.0, 240.0),
-            Vector2::<f64>::new(1.0, 0.0),
-            20.0,
-        ));
+        let mut total_cell_area = player_radius.powf(2.0) * PI;
+        let total_scene_area = self.window_size.0 * self.window_size.1;
+
+        while total_cell_area / total_scene_area < target_fill_ratio {
+            let radius: f64 = rng.gen_range(radius_limits[0]..radius_limits[1]);
+            let speed: f64 = rng.gen_range(speed_limits[0]..speed_limits[1]);
+            let cell_index = cell_collection.add_cell(Cell::new(
+                self.get_random_position_within_scene(radius, &mut rng),
+                self.get_random_velocity(speed, &mut rng),
+                20.0,
+            ));
+
+            total_cell_area += cell_collection.get_cell(cell_index).radius.powf(2.0) * PI;
+        }
 
         self.cell_collection = Some(cell_collection);
         self.player_index = Some(player_index);
@@ -178,16 +182,13 @@ impl CellCollectionFactory {
     fn get_random_position_within_scene(&self, radius: f64, rng: &mut ThreadRng) -> Vector2<f64> {
         let width = self.window_size.0 - 2.0 * radius;
         let height = self.window_size.1 - 2.0 * radius;
-        let x_rand: f64 = rng.gen();
-        let y_rand: f64 = rng.gen();
-        let x = radius + x_rand * width;
-        let y = radius + y_rand * height;
+        let x: f64 = rng.gen_range(radius..radius + width);
+        let y: f64 = rng.gen_range(radius..radius + height);
         Vector2::<f64>::new(x, y)
     }
 
     fn get_random_velocity(&self, magnitude: f64, rng: &mut ThreadRng) -> Vector2<f64> {
-        let angle_rand: f64 = rng.gen();
-        let angle = angle_rand * 2.0 * PI;
+        let angle: f64 = rng.gen_range(0.0..2.0 * PI);
         let x = angle.cos() * magnitude;
         let y = angle.sin() * magnitude;
         Vector2::<f64>::new(x, y)
