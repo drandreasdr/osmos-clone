@@ -8,7 +8,7 @@ use std::collections::hash_map::HashMap;
 use std::f64::consts::PI;
 
 pub fn get_index_of_dominant_cell(cells: [&Cell; 2], cell_indices: [i32; 2]) -> i32 {
-    //Larger cells dominate smaller. If equal in sizen, older cells dominate newer.
+    //Larger cells dominate smaller. If equal in size, then older cells dominate newer.
     if cells[0].radius > cells[1].radius {
         return 0;
     } else if cells[1].radius > cells[0].radius {
