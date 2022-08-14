@@ -1,4 +1,5 @@
 use super::cell_interactions;
+use super::constants;
 use super::constants::CollisionType;
 use super::entities::*;
 use super::input_handler;
@@ -46,7 +47,12 @@ impl Scene {
         return self.cell_collection.get_cell_mut(self.player_index);
     }
 
-    pub fn update(&mut self, dt: f64, input_handler: &input_handler::InputHandler) {
+    pub fn update(
+        &mut self,
+        dt: f64,
+        game_speed: &constants::GameSpeed,
+        input_handler: &input_handler::InputHandler,
+    ) {
         //Explanation for the order of function calls:
         // Advance the time step and handle ejection before handling cell collisions, since the latter resolves overlaps between cells
         // Handle cell collisions before wall bounce, since the latter corrects the position of cells that end up out of bounds
@@ -54,7 +60,15 @@ impl Scene {
         self.direction_marker.position =
             self.get_direction_marker_position(input_handler.mouse_position);
 
-        physics::integrate(self, dt);
+        let dt_factor = match game_speed {
+            constants::GameSpeed::SLOW => 0.5,
+            constants::GameSpeed::NORMAL => 1.0,
+            constants::GameSpeed::FAST => 5.0,
+        };
+
+        let dt_scaled = dt * dt_factor;
+
+        physics::integrate(self, dt_scaled);
 
         for input_action in input_handler.input_actions.iter() {
             if let input_handler::InputAction::LeftMouseClick(mouse_coordinates) = input_action {

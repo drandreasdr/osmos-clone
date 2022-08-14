@@ -30,3 +30,9 @@ pub enum Direction {
     Left,
     Right,
 }
+
+pub enum GameSpeed {
+    SLOW,
+    NORMAL,
+    FAST,
+}

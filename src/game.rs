@@ -12,6 +12,7 @@ use piston_window::*;
 pub struct Game {
     scene: scene::Scene,
     input_handler: input_handler::InputHandler,
+    game_speed: constants::GameSpeed,
 }
 
 impl Game {
@@ -29,6 +30,7 @@ impl Game {
         Game {
             scene,
             input_handler,
+            game_speed: constants::GameSpeed::SLOW,
         }
     }
 
@@ -59,7 +61,8 @@ impl Game {
             }
 
             if let Some(update_args) = event.update_args() {
-                self.scene.update(update_args.dt, &self.input_handler);
+                self.scene
+                    .update(update_args.dt, &self.game_speed, &self.input_handler);
                 self.input_handler.clear_input_actions();
             }
 
