@@ -50,7 +50,7 @@ impl Scene {
     pub fn update(
         &mut self,
         dt: f64,
-        game_speed: &constants::GameSpeed,
+        game_speed: constants::GameSpeed,
         input_handler: &input_handler::InputHandler,
     ) {
         //Explanation for the order of function calls:
@@ -61,18 +61,18 @@ impl Scene {
             self.get_direction_marker_position(input_handler.mouse_position);
 
         let dt_factor = match game_speed {
-            constants::GameSpeed::SLOW => 0.5,
+            constants::GameSpeed::SLOW => 0.2,
             constants::GameSpeed::NORMAL => 1.0,
             constants::GameSpeed::FAST => 5.0,
         };
 
-        let dt_scaled = dt * dt_factor;
+        let dt_modified = dt * dt_factor; //Not a good way to handle speedup/slowdown. In case of speedup I should do multiple time steps of the same size.
 
-        physics::integrate(self, dt_scaled);
+        physics::integrate(self, dt_modified);
 
-        for input_action in input_handler.input_actions.iter() {
-            if let input_handler::InputAction::LeftMouseClick(mouse_coordinates) = input_action {
-                self.handle_ejection(*mouse_coordinates);
+        for game_action in input_handler.game_actions.iter() {
+            if let constants::GameAction::EjectCell(mouse_coordinates) = game_action {
+                self.handle_ejection(Vector2::<f64>::from(*mouse_coordinates));
             }
         }
 
@@ -94,9 +94,10 @@ impl Scene {
         }
     }
 
-    fn get_direction_marker_position(&self, mouse_position: Vector2<f64>) -> Vector2<f64> {
+    fn get_direction_marker_position(&self, mouse_position: [f64; 2]) -> Vector2<f64> {
         let player = self.get_player();
-        let aim_direction = (mouse_position - player.position).normalize();
+        let mouse_position_vector = Vector2::<f64>::from(mouse_position);
+        let aim_direction = (mouse_position_vector - player.position).normalize();
         player.position + aim_direction * player.radius
     }
 

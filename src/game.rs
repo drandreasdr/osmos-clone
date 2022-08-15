@@ -30,7 +30,7 @@ impl Game {
         Game {
             scene,
             input_handler,
-            game_speed: constants::GameSpeed::SLOW,
+            game_speed: constants::GameSpeed::NORMAL,
         }
     }
 
@@ -56,14 +56,19 @@ impl Game {
             }
 
             if let Some(button_args) = event.button_args() {
-                self.input_handler
-                    .handle_button_args(&mut self.scene.get_player_mut(), button_args);
+                self.input_handler.handle_button_args(button_args);
             }
 
             if let Some(update_args) = event.update_args() {
+                for game_action in self.input_handler.game_actions.iter() {
+                    if let constants::GameAction::SetGameSpeed(game_speed) = *game_action {
+                        self.game_speed = game_speed;
+                    }
+                }
+
                 self.scene
-                    .update(update_args.dt, &self.game_speed, &self.input_handler);
-                self.input_handler.clear_input_actions();
+                    .update(update_args.dt, self.game_speed, &self.input_handler);
+                self.input_handler.clear_game_actions();
             }
 
             if let Some(_) = event.render_args() {

@@ -31,8 +31,15 @@ pub enum Direction {
     Right,
 }
 
+#[derive(Copy, Clone)]
 pub enum GameSpeed {
     SLOW,
     NORMAL,
     FAST,
+}
+
+#[derive(Copy, Clone)]
+pub enum GameAction {
+    SetGameSpeed(GameSpeed),
+    EjectCell([f64; 2]),
 }
